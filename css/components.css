@@ -339,12 +339,13 @@
    Matches the UI/UX aesthetic of the inspiration image
    -------------------------------------------------------------------------- */
 .hero-section {
-  padding-top: calc(var(--header-height) + 20px);
-  padding-bottom: 40px;
+  padding-top: calc(var(--header-height) + 36px);
+  padding-bottom: 50px;
   min-height: calc(100vh - var(--header-height));
+  min-height: calc(100dvh - var(--header-height));
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   position: relative;
   overflow: hidden;
 }
@@ -353,6 +354,8 @@
   position: relative;
   z-index: 2;
   width: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .hero-grid {
@@ -385,9 +388,9 @@
 }
 
 .hero-name {
-  font-size: 3.8rem;
+  font-size: clamp(2.6rem, 4.4vw, 3.6rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.08;
   letter-spacing: -0.03em;
   margin-bottom: 12px;
   color: var(--text-primary);
@@ -395,7 +398,7 @@
 
 @media (max-width: 768px) {
   .hero-name {
-    font-size: 2.8rem;
+    font-size: 2.4rem;
   }
 }
 

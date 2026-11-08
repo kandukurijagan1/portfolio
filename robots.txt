@@ -1,5 +1,5 @@
 # Robots.txt for Kandukuri Jagan's Official Production Portfolio
-# Primary Production URL: https://kandujuri-jagan-portfolio.netlify.app/
+# Primary Production URL: https://kandukuri-jagan-portfolio.netlify.app/
 
 User-agent: *
 Allow: /
@@ -28,5 +28,5 @@ User-agent: DuckDuckBot
 Allow: /
 
 # Host and Sitemap locations for Google, Bing, Yahoo, Yandex, DuckDuckGo
-Host: https://kandujuri-jagan-portfolio.netlify.app
-Sitemap: https://kandujuri-jagan-portfolio.netlify.app/sitemap.xml
+Host: https://kandukuri-jagan-portfolio.netlify.app
+Sitemap: https://kandukuri-jagan-portfolio.netlify.app/sitemap.xml

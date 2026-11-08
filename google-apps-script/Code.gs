@@ -65,7 +65,7 @@ function doPost(e) {
       '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f19; color: #f8fafc; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b; box-shadow: 0 15px 35px rgba(0,0,0,0.5);">' +
         '<div style="background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%); padding: 28px 24px; text-align: center;">' +
           '<h1 style="margin: 0; font-size: 22px; font-weight: 800; color: #ffffff;">🚀 New Portfolio Connection!</h1>' +
-          '<p style="margin: 6px 0 0; font-size: 13px; color: #e0e7ff;">A visitor reached out via kandujuri-jagan-portfolio.netlify.app</p>' +
+          '<p style="margin: 6px 0 0; font-size: 13px; color: #e0e7ff;">A visitor reached out via kandukuri-jagan-portfolio.netlify.app</p>' +
         '</div>' +
         '<div style="padding: 26px 24px;">' +
           '<div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 10px 14px; margin-bottom: 20px;">' +
@@ -153,7 +153,7 @@ function doPost(e) {
               '<div style="text-align: center; margin: 26px 0 20px;">' +
                 '<a href="https://www.linkedin.com/in/jagan-kandukuri-053a0331b/" style="display: inline-block; background: linear-gradient(135deg, #0ea5e9, #6366f1); color: #ffffff; text-decoration: none; padding: 11px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; margin: 4px 6px;">Connect on LinkedIn ↗</a>' +
                 '<a href="https://api.whatsapp.com/send?phone=918367047947" style="display: inline-block; background: #25D366; color: #ffffff; text-decoration: none; padding: 11px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; margin: 4px 6px;">Chat on WhatsApp 💬</a>' +
-                '<a href="https://kandujuri-jagan-portfolio.netlify.app/" style="display: inline-block; background: #1e293b; color: #f1f5f9; text-decoration: none; padding: 11px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; margin: 4px 6px; border: 1px solid #334155;">View Portfolio 🌐</a>' +
+                '<a href="https://kandukuri-jagan-portfolio.netlify.app/" style="display: inline-block; background: #1e293b; color: #f1f5f9; text-decoration: none; padding: 11px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; margin: 4px 6px; border: 1px solid #334155;">View Portfolio 🌐</a>' +
               '</div>' +
 
               '<p style="color: #94a3b8; font-size: 14px; line-height: 1.6; margin: 24px 0 4px;">' +
@@ -171,7 +171,7 @@ function doPost(e) {
             '<div style="background-color: #07090e; padding: 18px 24px; text-align: center; border-top: 1px solid #1e293b; color: #64748b; font-size: 12px; line-height: 1.6;">' +
               '<strong style="color: #cbd5e1;">Kandukuri Jagan</strong> • Saveetha University, Chennai<br/>' +
               '3rd Year B.E. Computer Science (CGPA: 9.04) • Synora\'26 Main Tech Lead<br/>' +
-              '<a href="https://kandujuri-jagan-portfolio.netlify.app/" style="color: #38bdf8; text-decoration: none;">kandujuri-jagan-portfolio.netlify.app</a>' +
+              '<a href="https://kandukuri-jagan-portfolio.netlify.app/" style="color: #38bdf8; text-decoration: none;">kandukuri-jagan-portfolio.netlify.app</a>' +
             '</div>' +
           '</div>';
 

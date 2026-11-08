@@ -48,7 +48,7 @@ When a visitor fills out the contact form on your portfolio:
 ---
 
 ## 🧪 Testing Live
-1. Open your live portfolio: [https://kandujuri-jagan-portfolio.netlify.app/#contact](https://kandujuri-jagan-portfolio.netlify.app/#contact).
+1. Open your live portfolio: [https://kandukuri-jagan-portfolio.netlify.app/#contact](https://kandukuri-jagan-portfolio.netlify.app/#contact).
 2. Enter your name, an alternate email address, subject, and message.
 3. Click **"Send Message"**.
 4. Both inboxes will receive their emails simultaneously!
