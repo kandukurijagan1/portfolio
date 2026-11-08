@@ -1,6 +1,12 @@
 # 🚀 Kandukuri Jagan – Professional Developer Portfolio Website
 
-A modern, premium, fully responsive personal portfolio website engineered for **Kandukuri Jagan**, **3rd Year** Computer Science undergraduate at **Saveetha University, Chennai (CGPA: 9.04, Expected Graduation May 2028)**, and **Main Lead of Synora'26 Hackathon (80+ Teams)**, specializing in **Full Stack Development (MERN Stack)**, **Python engineering**, and **applied AI systems**.
+[![Live Portfolio](https://img.shields.io/badge/Live_Portfolio-kandujuri--jagan--portfolio.netlify.app-00DC82?style=for-the-badge&logo=netlify&logoColor=white)](https://kandujuri-jagan-portfolio.netlify.app/)
+[![GitHub](https://img.shields.io/badge/GitHub-kandukurijagan1-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kandukurijagan1)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Jagan_Kandukuri-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/jagan-kandukuri-053a0331b/)
+
+> **🌐 Live Production Website**: [https://kandujuri-jagan-portfolio.netlify.app/](https://kandujuri-jagan-portfolio.netlify.app/)
+
+A modern, premium, fully responsive personal portfolio website engineered for **Kandukuri Jagan** (`kandukurijagan`), **3rd Year** Computer Science undergraduate at **Saveetha University, Chennai (CGPA: 9.04, Expected Graduation May 2028)**, and **Main Lead of Synora'26 Hackathon (80+ Teams)**, specializing in **Full Stack Development (MERN Stack)**, **Python engineering**, and **applied AI systems**.
 
 Built with clean semantic HTML5, modern CSS3 (custom properties, CSS grid, glassmorphism, responsive media queries), and modular vanilla JavaScript ES6+. Zero build tools or bloated dependencies required.
 
