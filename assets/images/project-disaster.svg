@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="pDisasterBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+    <linearGradient id="teleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+    <linearGradient id="alertGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
+    <filter id="radarGlow">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="800" height="480" fill="url(#pDisasterBg)" />
+
+  <!-- Left: Incident Map & Command Radar Center -->
+  <g transform="translate(60, 45)">
+    <!-- Map Container -->
+    <rect width="380" height="390" rx="16" fill="#0f172a" stroke="#334155" stroke-width="2" />
+    
+    <!-- Top Bar -->
+    <rect width="380" height="44" rx="16" fill="#1e293b" />
+    <circle cx="20" cy="22" r="5" fill="#ef4444" />
+    <circle cx="36" cy="22" r="5" fill="#f59e0b" />
+    <circle cx="52" cy="22" r="5" fill="#10b981" />
+    <text x="75" y="27" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">DISASTER RESPONSE RADAR • LIVE GPS</text>
+
+    <!-- Radar Circles -->
+    <g transform="translate(190, 200)" opacity="0.4" stroke="#06b6d4" stroke-width="1.5">
+      <circle cx="0" cy="0" r="140" fill="none" />
+      <circle cx="0" cy="0" r="100" fill="none" />
+      <circle cx="0" cy="0" r="60" fill="none" />
+      <line x1="-140" y1="0" x2="140" y2="0" />
+      <line x1="0" y1="-140" x2="0" y2="140" />
+      <!-- Radar Sweeper line -->
+      <line x1="0" y1="0" x2="100" y2="-90" stroke="#38bdf8" stroke-width="2.5" />
+    </g>
+
+    <!-- Map Incident Pins & Waves -->
+    <!-- Incident 1: Flash Flood Alert (Center) -->
+    <g transform="translate(190, 200)">
+      <circle cx="0" cy="0" r="28" fill="#ef4444" fill-opacity="0.25" filter="url(#radarGlow)" />
+      <circle cx="0" cy="0" r="14" fill="#ef4444" />
+      <path d="M0,-12 L-4,0 L4,0 Z" fill="#ffffff" />
+      <circle cx="0" cy="4" r="2" fill="#ffffff" />
+      
+      <!-- Callout tag -->
+      <rect x="25" y="-30" width="135" height="38" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="1" />
+      <text x="35" y="-16" fill="#ef4444" font-family="sans-serif" font-size="10" font-weight="bold">FLASH FLOOD #ZONE-4</text>
+      <text x="35" y="-2" fill="#94a3b8" font-family="sans-serif" font-size="9">Severity: Critical (Cat 3)</text>
+    </g>
+
+    <!-- Incident 2: Evacuation Shelter (Safe Zone) -->
+    <g transform="translate(100, 110)">
+      <circle cx="0" cy="0" r="16" fill="#10b981" fill-opacity="0.3" />
+      <circle cx="0" cy="0" r="9" fill="#10b981" />
+      <text x="15" y="4" fill="#10b981" font-family="sans-serif" font-size="10" font-weight="bold">Shelter #02 (Capacity: 84%)</text>
+    </g>
+
+    <!-- Bottom Status -->
+    <rect x="15" y="340" width="350" height="36" rx="8" fill="#020617" stroke="#1e293b" />
+    <text x="28" y="362" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="10">GeoJSON API: 24 active sensors • 3 shelters ready</text>
+  </g>
+
+  <!-- Right: Automated Notification Dispatch Engine (Telegram & Email) -->
+  <g transform="translate(470, 45)">
+    <!-- Engine Container -->
+    <rect width="270" height="390" rx="16" fill="#111827" stroke="#334155" stroke-width="2" />
+    
+    <!-- Top Bar -->
+    <rect width="270" height="44" rx="16" fill="#1e293b" />
+    <text x="20" y="27" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">⚡ Auto-Alert Dispatcher</text>
+
+    <!-- Telegram Notification Card -->
+    <g transform="translate(18, 60)">
+      <rect width="234" height="135" rx="12" fill="#0c4a6e" fill-opacity="0.25" stroke="#0284c7" stroke-width="1.5" />
+      <!-- Header -->
+      <circle cx="24" cy="24" r="12" fill="#0284c7" />
+      <path d="M17,24 L30,18 L26,30 L22,26 Z" fill="#ffffff" />
+      <text x="44" y="22" fill="#38bdf8" font-family="sans-serif" font-size="11" font-weight="bold">Telegram Emergency Bot</text>
+      <text x="44" y="34" fill="#94a3b8" font-family="sans-serif" font-size="9">Broadcast to 14,200 Citizens</text>
+
+      <rect x="14" y="46" width="206" height="74" rx="8" fill="#0f172a" />
+      <text x="22" y="66" fill="#ef4444" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">🚨 RED ALERT: ZONE 4 EVACUATION</text>
+      <text x="22" y="82" fill="#e2e8f0" font-family="sans-serif" font-size="9">High water levels reported. Proceed to</text>
+      <text x="22" y="96" fill="#e2e8f0" font-family="sans-serif" font-size="9">Shelter #02 (Saveetha Relief Camp).</text>
+      <text x="22" y="110" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="8">Sent: 20:28 • Delivery: 99.8%</text>
+    </g>
+
+    <!-- Email Notification Card -->
+    <g transform="translate(18, 210)">
+      <rect width="234" height="115" rx="12" fill="#1e1b4b" fill-opacity="0.3" stroke="#8b5cf6" stroke-width="1.5" />
+      <circle cx="24" cy="22" r="12" fill="#8b5cf6" />
+      <text x="18" y="27" fill="#ffffff" font-size="11">✉</text>
+      <text x="44" y="22" fill="#c084fc" font-family="sans-serif" font-size="11" font-weight="bold">SMTP Responder Alert</text>
+      <text x="44" y="34" fill="#94a3b8" font-family="sans-serif" font-size="9">To: First Responders &amp; NDRF</text>
+
+      <rect x="14" y="46" width="206" height="55" rx="8" fill="#0f172a" />
+      <text x="22" y="65" fill="#e2e8f0" font-family="sans-serif" font-size="9">Subject: Priority 1 Resource Request</text>
+      <text x="22" y="80" fill="#94a3b8" font-family="sans-serif" font-size="9">Dispatched 3 rescue boats to sector B.</text>
+    </g>
+
+    <!-- Dispatch Trigger Status Button -->
+    <g transform="translate(18, 340)">
+      <rect width="234" height="34" rx="8" fill="url(#alertGrad)" />
+      <text x="42" y="362" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="bold">BROADCAST PIPELINE ACTIVE</text>
+    </g>
+  </g>
+</svg>

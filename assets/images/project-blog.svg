@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="pBlogBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0f1d" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e183a" />
+    </linearGradient>
+    <linearGradient id="pinkAppwrite" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <linearGradient id="reactCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#61dafb" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+    <filter id="blogGlow">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="800" height="480" fill="url(#pBlogBg)" />
+
+  <circle cx="200" cy="150" r="160" fill="#61dafb" opacity="0.1" filter="url(#blogGlow)" />
+  <circle cx="650" cy="350" r="140" fill="#ec4899" opacity="0.12" filter="url(#blogGlow)" />
+
+  <!-- Left: Main Blog Application Interface -->
+  <g transform="translate(60, 45)">
+    <rect width="440" height="390" rx="16" fill="#0f172a" stroke="#334155" stroke-width="2" />
+    
+    <!-- Top Header -->
+    <rect width="440" height="46" rx="16" fill="#1e293b" />
+    <circle cx="24" cy="23" r="5" fill="#ef4444" />
+    <circle cx="40" cy="23" r="5" fill="#f59e0b" />
+    <circle cx="56" cy="23" r="5" fill="#10b981" />
+    <text x="75" y="28" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">DevLog • Modern Full-Stack Blog Platform</text>
+    <rect x="330" y="12" width="95" height="22" rx="11" fill="#ec4899" fill-opacity="0.15" stroke="#ec4899" />
+    <text x="345" y="27" fill="#f43f5e" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">APPWRITE</text>
+
+    <!-- Blog Featured Article Card -->
+    <g transform="translate(22, 62)">
+      <rect width="396" height="150" rx="10" fill="#0b0f19" stroke="#61dafb" stroke-width="1.5" />
+      <!-- Image thumbnail placeholder -->
+      <rect x="15" y="15" width="130" height="120" rx="8" fill="#1e293b" />
+      <text x="80" y="80" text-anchor="middle" fill="#61dafb" font-family="'JetBrains Mono', monospace" font-size="28" font-weight="bold">&lt;/&gt;</text>
+      
+      <!-- Article Text Details -->
+      <g transform="translate(160, 25)">
+        <rect width="70" height="20" rx="10" fill="#61dafb" fill-opacity="0.2" />
+        <text x="10" y="14" fill="#61dafb" font-family="sans-serif" font-size="9" font-weight="bold">TECH &amp; AI</text>
+        <text y="42" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="bold">Architecting Scalable React Apps</text>
+        <text y="62" fill="#94a3b8" font-family="sans-serif" font-size="10">Managing global state with Redux Toolkit</text>
+        <text y="78" fill="#94a3b8" font-family="sans-serif" font-size="10">and backend services via Appwrite BaaS.</text>
+        <text y="105" fill="#ec4899" font-family="'JetBrains Mono', monospace" font-size="9">By Kandukuri Jagan • 5 min read</text>
+      </g>
+    </g>
+
+    <!-- Appwrite Auth & Redux State Indicator -->
+    <g transform="translate(22, 226)">
+      <rect width="396" height="135" rx="10" fill="#0b0f19" stroke="#1e293b" />
+      
+      <text x="18" y="28" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="bold">Authentication &amp; User Session Status:</text>
+      
+      <rect x="18" y="40" width="360" height="34" rx="6" fill="#1e293b" />
+      <circle cx="35" cy="57" r="6" fill="#10b981" />
+      <text x="50" y="61" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="10.5">JWT Auth Active: Session #APW-9402X [Admin]</text>
+
+      <!-- Redux Action Dispatch Tracker -->
+      <g transform="translate(18, 86)" font-family="'JetBrains Mono', monospace" font-size="10">
+        <text y="12" fill="#818cf8">▹ action: auth/loginSuccess</text>
+        <text y="30" fill="#38bdf8">▹ action: posts/fetchLatestPosts [fulfilled]</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Right: Appwrite Backend & Redux Architecture -->
+  <g transform="translate(525, 45)">
+    <rect width="225" height="185" rx="14" fill="#0f172a" stroke="#ec4899" stroke-width="1.5" />
+    <text x="20" y="32" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">Appwrite Cloud BaaS</text>
+    
+    <rect x="20" y="48" width="185" height="52" rx="8" fill="#1e293b" />
+    <text x="32" y="68" fill="#94a3b8" font-family="sans-serif" font-size="10">DATABASE COLLECTIONS</text>
+    <text x="32" y="89" fill="#ec4899" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="bold">Articles, Users, Tags</text>
+
+    <rect x="20" y="112" width="185" height="52" rx="8" fill="#1e293b" />
+    <text x="32" y="132" fill="#94a3b8" font-family="sans-serif" font-size="10">STORAGE BUCKET</text>
+    <text x="32" y="153" fill="#61dafb" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="bold">Image Uploads CDN</text>
+
+    <!-- Tech Badges -->
+    <g transform="translate(0, 205)">
+      <rect width="225" height="185" rx="14" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+      <text x="20" y="32" fill="#61dafb" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">Frontend Architecture</text>
+      <text x="20" y="58" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• React 18 &amp; Hooks</text>
+      <text x="20" y="82" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• Redux Toolkit State</text>
+      <text x="20" y="106" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• Rich Text Editor (TinyMCE)</text>
+      <rect x="20" y="130" width="185" height="34" rx="6" fill="#1e293b" stroke="#61dafb" />
+      <text x="35" y="152" fill="#61dafb" font-family="sans-serif" font-size="11" font-weight="bold">Responsive Web UI</text>
+    </g>
+  </g>
+</svg>

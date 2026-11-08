@@ -1,0 +1,408 @@
+/* ==========================================================================
+   PORTFOLIO ADVANCED EFFECTS & ANIMATIONS
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. SCROLL PROGRESS BAR (TOP OF VIEWPORT)
+   -------------------------------------------------------------------------- */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3.5px;
+  width: 0%;
+  background: linear-gradient(90deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+  z-index: 100000;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.8), 0 0 4px rgba(192, 132, 252, 0.6);
+  pointer-events: none;
+  transition: width 0.08s ease-out;
+}
+
+[data-theme="light"] .scroll-progress-bar {
+  background: linear-gradient(90deg, #2563eb 0%, #7c3aed 50%, #0284c7 100%);
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   2. CARD SPOTLIGHT MOUSE GLOW (LINEAR / VERCEL STYLE)
+   -------------------------------------------------------------------------- */
+.project-card,
+.timeline-card,
+.highlight-box,
+.pillar-card,
+.contact-info-card,
+.cert-folder-card,
+.skill-category-card,
+.about-card,
+.contact-form-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card::before,
+.timeline-card::before,
+.highlight-box::before,
+.pillar-card::before,
+.contact-info-card::before,
+.cert-folder-card::before,
+.skill-category-card::before,
+.about-card::before,
+.contact-form-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    550px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+    rgba(56, 189, 248, 0.14),
+    transparent 42%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+[data-theme="light"] .project-card::before,
+[data-theme="light"] .timeline-card::before,
+[data-theme="light"] .highlight-box::before,
+[data-theme="light"] .pillar-card::before,
+[data-theme="light"] .contact-info-card::before,
+[data-theme="light"] .cert-folder-card::before,
+[data-theme="light"] .skill-category-card::before,
+[data-theme="light"] .about-card::before,
+[data-theme="light"] .contact-form-card::before {
+  background: radial-gradient(
+    550px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+    rgba(37, 99, 235, 0.09),
+    transparent 42%
+  );
+}
+
+.project-card:hover::before,
+.timeline-card:hover::before,
+.highlight-box:hover::before,
+.pillar-card:hover::before,
+.contact-info-card:hover::before,
+.cert-folder-card:hover::before,
+.skill-category-card:hover::before,
+.about-card:hover::before,
+.contact-form-card:hover::before {
+  opacity: 1;
+}
+
+/* Keep interactive content above spotlight glow */
+.project-body,
+.project-image-box,
+.folder-info,
+.folder-graphic-wrapper,
+.skill-category-card > *,
+.pillar-card > *,
+.timeline-card > *,
+.about-highlights-grid,
+.highlight-box > *,
+.contact-form-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* --------------------------------------------------------------------------
+   3. MAGNETIC BUTTON SPRING PHYSICS
+   -------------------------------------------------------------------------- */
+.btn,
+.social-icon-btn,
+.theme-toggle-btn {
+  transition: transform 0.18s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   4. INTERACTIVE CLICK RIPPLE EFFECT
+   -------------------------------------------------------------------------- */
+.btn,
+.social-icon-btn,
+.filter-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.click-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: rippleAnimation 0.6s linear;
+  pointer-events: none;
+}
+
+[data-theme="light"] .click-ripple {
+  background: rgba(37, 99, 235, 0.25);
+}
+
+@keyframes rippleAnimation {
+  to {
+    transform: scale(3.5);
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. BORDER BEAM PULSE ON FLAGSHIP CARDS
+   -------------------------------------------------------------------------- */
+.featured-synora {
+  position: relative;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.15) !important;
+}
+
+@keyframes borderBeamSweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-flow-text {
+  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 35%, #c084fc 70%, #38bdf8 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: borderBeamSweep 8s ease infinite;
+}
+
+/* --------------------------------------------------------------------------
+   6. SCROLL REVEALS (PERFORMANT GPU ACCELERATED)
+   -------------------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-32px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(32px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.active,
+.reveal-left.active,
+.reveal-right.active,
+.reveal-scale.active {
+  opacity: 1;
+  transform: translate(0) scale(1);
+}
+
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* Subtle Floating Animations */
+@keyframes floatSoft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: floatSoft 5s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: floatSoft 6s ease-in-out infinite;
+  animation-delay: -2.5s;
+}
+
+/* Glowing Border Pulse */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.55);
+  }
+}
+
+.glow-pulse {
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+/* Shimmer Wave */
+@keyframes shimmerWave {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #38bdf8 0%, #a855f7 50%, #38bdf8 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmerWave 6s linear infinite;
+}
+
+/* Spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.icon-spin {
+  animation: spin 1s linear infinite;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. AMBIENT FLUID CURSOR AURA (SMOOTH LERP FOLLOWER)
+   -------------------------------------------------------------------------- */
+.cursor-ambient-aura {
+  position: fixed;
+  top: -160px;
+  left: -160px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.15) 0%,
+    rgba(129, 140, 248, 0.08) 45%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+  mix-blend-mode: screen;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.35s ease;
+  filter: blur(28px);
+}
+
+.cursor-ambient-aura.aura-active {
+  width: 480px;
+  height: 480px;
+  top: -240px;
+  left: -240px;
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.22) 0%,
+    rgba(192, 132, 252, 0.14) 48%,
+    transparent 70%
+  );
+  filter: blur(36px);
+}
+
+[data-theme="light"] .cursor-ambient-aura {
+  background: radial-gradient(
+    circle,
+    rgba(37, 99, 235, 0.08) 0%,
+    rgba(124, 58, 237, 0.04) 45%,
+    transparent 70%
+  );
+}
+
+/* --------------------------------------------------------------------------
+   8. CYBER MATRIX / TEXT SCRAMBLE DECODER GLYPHS
+   -------------------------------------------------------------------------- */
+.scramble-glyph {
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  opacity: 0.95;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.85);
+  display: inline-block;
+}
+
+[data-theme="light"] .scramble-glyph {
+  color: var(--accent-blue);
+  text-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   9. MAGIC UI DYNAMIC LASER BORDER BEAM
+   -------------------------------------------------------------------------- */
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes laserBeamOrbit {
+  to {
+    --border-angle: 360deg;
+  }
+}
+
+.featured-synora,
+.border-laser-card {
+  position: relative;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.18) !important;
+}
+
+/* --------------------------------------------------------------------------
+   10. INTERACTIVE PROJECT IMAGE ZOOM & DETAIL BUTTON
+   -------------------------------------------------------------------------- */
+.project-image-box {
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.project-image-box img {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.project-card:hover .project-image-box img {
+  transform: scale(1.05);
+}
+
+
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

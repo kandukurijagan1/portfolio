@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found | Kandukuri Jagan</title>
+  <meta name="theme-color" content="#07090e">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .error-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .error-code {
+      font-family: var(--font-mono);
+      font-size: 7rem;
+      font-weight: 900;
+      line-height: 1;
+      background: var(--grad-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      text-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+    }
+    .error-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 50px 40px;
+      max-width: 540px;
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="ambient-orb ambient-orb-1"></div>
+    <div class="ambient-orb ambient-orb-2"></div>
+  </div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <main class="error-wrapper">
+    <div class="error-card">
+      <div class="error-code">404</div>
+      <h1 style="font-size: 1.8rem; margin-bottom: 12px; color: var(--text-primary);">Page Not Found</h1>
+      <p style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 30px; line-height: 1.6;">
+        The requested resource has either been moved or does not exist in this directory structure.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 16px;">
+        <a href="index.html" class="btn btn-primary">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>Return to Portfolio</span>
+        </a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="pCurrBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#08101a" />
+      <stop offset="50%" stop-color="#0e1d2e" />
+      <stop offset="100%" stop-color="#142c40" />
+    </linearGradient>
+    <linearGradient id="emeraldGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <filter id="currGlow">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="800" height="480" fill="url(#pCurrBg)" />
+
+  <circle cx="220" cy="160" r="160" fill="#10b981" opacity="0.12" filter="url(#currGlow)" />
+  <circle cx="640" cy="340" r="140" fill="#06b6d4" opacity="0.12" filter="url(#currGlow)" />
+
+  <!-- Left: Currency Converter Web Application -->
+  <g transform="translate(60, 45)">
+    <rect width="440" height="390" rx="16" fill="#0f172a" stroke="#334155" stroke-width="2" />
+    
+    <!-- Header -->
+    <rect width="440" height="46" rx="16" fill="#1e293b" />
+    <circle cx="24" cy="23" r="5" fill="#ef4444" />
+    <circle cx="40" cy="23" r="5" fill="#f59e0b" />
+    <circle cx="56" cy="23" r="5" fill="#10b981" />
+    <text x="75" y="28" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">ExchangeFlow • Live Global Currency Converter</text>
+    <rect x="330" y="12" width="95" height="22" rx="11" fill="#10b981" fill-opacity="0.2" stroke="#10b981" />
+    <text x="345" y="27" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">LIVE API</text>
+
+    <!-- Source Currency Card -->
+    <g transform="translate(22, 65)">
+      <rect width="396" height="85" rx="10" fill="#0b0f19" stroke="#10b981" stroke-width="1.5" />
+      <text x="20" y="28" fill="#94a3b8" font-family="sans-serif" font-size="11">FROM CURRENCY</text>
+      <text x="20" y="60" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="bold">$ 1,000.00</text>
+      <rect x="290" y="25" width="85" height="40" rx="8" fill="#1e293b" stroke="#334155" />
+      <text x="305" y="50" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="bold">🇺🇸 USD</text>
+    </g>
+
+    <!-- Swap Button In Between -->
+    <g transform="translate(195, 155)">
+      <circle cx="25" cy="25" r="22" fill="#10b981" />
+      <path d="M18 22 L32 22 M28 17 L33 22 L28 27" stroke="#020617" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M32 28 L18 28 M22 23 L17 28 L22 33" stroke="#020617" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+
+    <!-- Target Currency Card -->
+    <g transform="translate(22, 205)">
+      <rect width="396" height="85" rx="10" fill="#0b0f19" stroke="#06b6d4" stroke-width="1.5" />
+      <text x="20" y="28" fill="#94a3b8" font-family="sans-serif" font-size="11">TO CURRENCY (CONVERTED RESULT)</text>
+      <text x="20" y="60" fill="#38bdf8" font-family="'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="bold">₹ 86,450.00</text>
+      <rect x="290" y="25" width="85" height="40" rx="8" fill="#1e293b" stroke="#334155" />
+      <text x="305" y="50" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="bold">🇮🇳 INR</text>
+    </g>
+
+    <!-- Real-time Rate Indicator Footer -->
+    <rect x="22" y="310" width="396" height="50" rx="8" fill="#1e293b" />
+    <text x="36" y="340" fill="#e2e8f0" font-family="'JetBrains Mono', monospace" font-size="11">1 USD = 86.45 INR • Real-time Forex API Feed</text>
+  </g>
+
+  <!-- Right: Multi-Currency Rates Panel -->
+  <g transform="translate(525, 45)">
+    <rect width="225" height="185" rx="14" fill="#0f172a" stroke="#10b981" stroke-width="1.5" />
+    <text x="20" y="32" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">Live Exchange Ticker</text>
+    
+    <rect x="20" y="48" width="185" height="52" rx="8" fill="#1e293b" />
+    <text x="32" y="68" fill="#94a3b8" font-family="sans-serif" font-size="10">EUR / USD</text>
+    <text x="32" y="89" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="15" font-weight="bold">1.0845 € (+0.3%)</text>
+
+    <rect x="20" y="112" width="185" height="52" rx="8" fill="#1e293b" />
+    <text x="32" y="132" fill="#94a3b8" font-family="sans-serif" font-size="10">GBP / USD</text>
+    <text x="32" y="153" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="15" font-weight="bold">1.2980 £ (+0.1%)</text>
+
+    <!-- Global Currencies Supported -->
+    <g transform="translate(0, 205)">
+      <rect width="225" height="185" rx="14" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+      <text x="20" y="32" fill="#38bdf8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">Supported Features</text>
+      <text x="20" y="58" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• 160+ Global Currencies</text>
+      <text x="20" y="82" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• Instant Swap Button</text>
+      <text x="20" y="106" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• Offline Rate Caching</text>
+      <rect x="20" y="130" width="185" height="34" rx="6" fill="#1e293b" stroke="#10b981" />
+      <text x="35" y="152" fill="#10b981" font-family="sans-serif" font-size="11" font-weight="bold">React + REST API</text>
+    </g>
+  </g>
+</svg>

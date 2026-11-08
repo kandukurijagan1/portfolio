@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="pCertBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a081c" />
+      <stop offset="50%" stop-color="#130d2e" />
+      <stop offset="100%" stop-color="#1c1145" />
+    </linearGradient>
+    <linearGradient id="goldCertificate" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <linearGradient id="purpleShare" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#6366f1" />
+    </linearGradient>
+    <filter id="certGlow">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="800" height="480" fill="url(#pCertBg)" />
+
+  <!-- Ambient Glow -->
+  <circle cx="220" cy="150" r="160" fill="#f59e0b" opacity="0.12" filter="url(#certGlow)" />
+  <circle cx="650" cy="350" r="140" fill="#8b5cf6" opacity="0.12" filter="url(#certGlow)" />
+
+  <!-- Left: Generated Digital Certificate Canvas Preview -->
+  <g transform="translate(60, 45)">
+    <!-- Certificate Border Frame -->
+    <rect width="430" height="390" rx="16" fill="#0f172a" stroke="#334155" stroke-width="2" />
+    
+    <!-- Top Header -->
+    <rect width="430" height="46" rx="16" fill="#1e293b" />
+    <circle cx="22" cy="23" r="5" fill="#ef4444" />
+    <circle cx="38" cy="23" r="5" fill="#f59e0b" />
+    <circle cx="54" cy="23" r="5" fill="#10b981" />
+    <text x="75" y="28" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">CertifyHub • Digital Certificate Generation &amp; Sharing</text>
+    <rect x="330" y="12" width="85" height="22" rx="11" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" />
+    <text x="340" y="27" fill="#fbbf24" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">VERIFIED</text>
+
+    <!-- Inner Certificate Canvas -->
+    <g transform="translate(20, 62)">
+      <rect width="390" height="235" rx="10" fill="#0b0f19" stroke="url(#goldCertificate)" stroke-width="2" />
+      
+      <!-- Fancy Certificate Header -->
+      <text x="195" y="40" text-anchor="middle" fill="url(#goldCertificate)" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="bold" letter-spacing="2">CERTIFICATE OF PARTICIPATION</text>
+      <text x="195" y="60" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10">THIS CREDENTIAL IS PROUDLY PRESENTED TO</text>
+      
+      <!-- Recipient Name -->
+      <text x="195" y="98" text-anchor="middle" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-size="20" font-weight="800">Anthony Rovira</text>
+      <line x1="85" y1="108" x2="305" y2="108" stroke="#334155" stroke-width="1" />
+      
+      <!-- Description -->
+      <text x="195" y="128" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10">for outstanding performance in the National Level AI Hackathon</text>
+      
+      <!-- Bottom Metadata & QR Code -->
+      <g transform="translate(25, 150)">
+        <rect width="60" height="60" rx="4" fill="#ffffff" />
+        <!-- QR Code Matrix -->
+        <rect x="5" y="5" width="16" height="16" fill="#000000" />
+        <rect x="39" y="5" width="16" height="16" fill="#000000" />
+        <rect x="5" y="39" width="16" height="16" fill="#000000" />
+        <rect x="25" y="15" width="8" height="8" fill="#000000" />
+        <rect x="25" y="35" width="10" height="10" fill="#000000" />
+        <rect x="42" y="35" width="8" height="8" fill="#000000" />
+        
+        <text x="75" y="24" fill="#e2e8f0" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">ID: CERT-2025-9842X</text>
+        <text x="75" y="40" fill="#10b981" font-family="sans-serif" font-size="9">✓ Cryptographically Signed &amp; Verifiable</text>
+        <text x="75" y="54" fill="#64748b" font-family="sans-serif" font-size="9">Issued: Saveetha School of Engineering</text>
+      </g>
+    </g>
+
+    <!-- Social Share Action Bar -->
+    <g transform="translate(20, 312)">
+      <rect width="390" height="60" rx="10" fill="#1e293b" />
+      <text x="16" y="35" fill="#e2e8f0" font-family="sans-serif" font-size="11" font-weight="bold">1-Click Share:</text>
+      
+      <!-- LinkedIn Share -->
+      <rect x="110" y="14" width="100" height="32" rx="6" fill="#0284c7" />
+      <text x="122" y="34" fill="#ffffff" font-family="sans-serif" font-size="10" font-weight="bold">Add to LinkedIn</text>
+
+      <!-- PDF Download -->
+      <rect x="220" y="14" width="85" height="32" rx="6" fill="url(#goldCertificate)" />
+      <text x="232" y="34" fill="#020617" font-family="sans-serif" font-size="10" font-weight="bold">Download PDF</text>
+
+      <!-- WhatsApp Share -->
+      <rect x="315" y="14" width="60" height="32" rx="6" fill="#10b981" />
+      <text x="325" y="34" fill="#ffffff" font-family="sans-serif" font-size="10" font-weight="bold">Share</text>
+    </g>
+  </g>
+
+  <!-- Right: Batch Generation Pipeline & Verification -->
+  <g transform="translate(515, 45)">
+    <rect width="235" height="185" rx="14" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5" />
+    <text x="20" y="32" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">Automated Batch Engine</text>
+    
+    <rect x="20" y="48" width="195" height="52" rx="8" fill="#1e293b" />
+    <text x="32" y="68" fill="#94a3b8" font-family="sans-serif" font-size="10">BULK CERTIFICATES ISSUED</text>
+    <text x="32" y="89" fill="#f59e0b" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="bold">1,450 Issued</text>
+
+    <rect x="20" y="112" width="195" height="52" rx="8" fill="#1e293b" />
+    <text x="32" y="132" fill="#94a3b8" font-family="sans-serif" font-size="10">AVERAGE DISPATCH TIME</text>
+    <text x="32" y="153" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="bold">&lt; 3 Sec / Batch</text>
+
+    <!-- Verification Portal Card -->
+    <g transform="translate(0, 205)">
+      <rect width="235" height="185" rx="14" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+      <text x="20" y="32" fill="#38bdf8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">Public Verification URL</text>
+      <text x="20" y="58" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• Instant QR Code Scan</text>
+      <text x="20" y="82" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• Anti-Tamper Hash Signature</text>
+      <text x="20" y="106" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• PDF Auto-Email Delivery</text>
+      <rect x="20" y="130" width="195" height="34" rx="6" fill="#1e293b" stroke="#8b5cf6" />
+      <text x="35" y="152" fill="#c084fc" font-family="sans-serif" font-size="11" font-weight="bold">verify.domain/cert/:id</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,390 @@
+/* ==========================================================================
+   ADVANCED HERO PHOTO EFFECTS & HOLOGRAPHIC HUD SYSTEM
+   ========================================================================== */
+
+.hero-photo-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 1. Ambient Dual Halo Glow */
+.hero-photo-halo {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.35) 0%,
+    rgba(129, 140, 248, 0.25) 45%,
+    rgba(192, 132, 252, 0.15) 65%,
+    transparent 80%
+  );
+  filter: blur(35px);
+  pointer-events: none;
+  z-index: 0;
+  animation: pulseHaloGlow 5s ease-in-out infinite;
+}
+
+@keyframes pulseHaloGlow {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.7;
+    filter: blur(32px);
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+    filter: blur(42px);
+  }
+}
+
+[data-theme="light"] .hero-photo-halo {
+  background: radial-gradient(
+    circle,
+    rgba(37, 99, 235, 0.22) 0%,
+    rgba(124, 58, 237, 0.15) 50%,
+    transparent 75%
+  );
+}
+
+/* 2. Main 3D Card */
+.hero-photo-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 380px;
+  aspect-ratio: 1 / 1;
+  border-radius: 30px;
+  padding: 3px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.6) 0%, rgba(129, 140, 248, 0.2) 50%, rgba(192, 132, 252, 0.6) 100%);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 35px rgba(56, 189, 248, 0.25);
+  transform-style: preserve-3d;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.4s ease;
+  cursor: pointer;
+}
+
+.hero-photo-card:hover {
+  box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.9), 0 0 50px rgba(56, 189, 248, 0.45);
+}
+
+/* 3. Rotating Laser Perimeter Beam */
+@property --laser-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes laserRotate {
+  to {
+    --laser-angle: 360deg;
+  }
+}
+
+.hero-photo-laser-border {
+  position: absolute;
+  inset: -2px;
+  border-radius: 32px;
+  padding: 2.5px;
+  background: conic-gradient(
+    from var(--laser-angle),
+    transparent 60%,
+    rgba(56, 189, 248, 0.9) 80%,
+    rgba(192, 132, 252, 1) 95%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 5;
+  animation: laserRotate 4s linear infinite;
+}
+
+/* 4. Cyberpunk Corner HUD Brackets */
+.cyber-bracket {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid #38bdf8;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+}
+
+.cyber-bracket-tl {
+  top: 10px;
+  left: 10px;
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 8px;
+}
+
+.cyber-bracket-tr {
+  top: 10px;
+  right: 10px;
+  border-left: none;
+  border-bottom: none;
+  border-top-right-radius: 8px;
+}
+
+.cyber-bracket-bl {
+  bottom: 10px;
+  left: 10px;
+  border-right: none;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+}
+
+.cyber-bracket-br {
+  bottom: 10px;
+  right: 10px;
+  border-left: none;
+  border-top: none;
+  border-bottom-right-radius: 8px;
+}
+
+.hero-photo-card:hover .cyber-bracket {
+  opacity: 1;
+  border-color: #c084fc;
+  transform: scale(1.15);
+}
+
+/* 5. Biometric Scanline Effect */
+.cyber-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #38bdf8, #ffffff, #38bdf8, transparent);
+  box-shadow: 0 0 15px #38bdf8, 0 0 30px #38bdf8;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 7;
+}
+
+.hero-photo-card:hover .cyber-scanline {
+  animation: scanlineSweep 2.2s ease-in-out infinite;
+  opacity: 0.85;
+}
+
+@keyframes scanlineSweep {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+/* 6. Specular Glare */
+.photo-specular-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 7. Inner Image Container */
+.hero-photo-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 27px;
+  overflow: hidden;
+  background: #0b0f19;
+}
+
+.hero-photo-inner .hero-profile-img {
+  width: 100% !important;
+  height: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+  object-position: center 15% !important;
+  display: block !important;
+  border-radius: 27px;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+
+.hero-photo-card:hover .hero-profile-img {
+  transform: scale(1.04);
+  filter: brightness(1.06) contrast(1.02);
+}
+
+/* 8. Floating 3D Holographic Badges */
+.floating-photo-badge {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(56, 189, 248, 0.2);
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.3s ease;
+  white-space: nowrap;
+}
+
+[data-theme="light"] .floating-photo-badge {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(37, 99, 235, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12), 0 0 10px rgba(37, 99, 235, 0.15);
+}
+
+.floating-photo-badge:hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.4);
+  border-color: var(--accent-cyan);
+}
+
+.badge-pos-tl {
+  top: -12px;
+  left: -20px;
+  animation: floatBobTL 4.5s ease-in-out infinite;
+}
+
+.badge-pos-br {
+  bottom: -15px;
+  right: -20px;
+  animation: floatBobBR 5s ease-in-out infinite;
+}
+
+.badge-pos-bl {
+  bottom: 25px;
+  left: -25px;
+  animation: floatBobBL 4.2s ease-in-out infinite;
+}
+
+@media (max-width: 992px) {
+  .hero-photo-wrapper {
+    margin: 30px auto 0 auto;
+    max-width: 380px;
+    padding: 14px 10px;
+  }
+  .badge-pos-tl {
+    top: 6px;
+    left: 8px;
+  }
+  .badge-pos-br {
+    bottom: 6px;
+    right: 8px;
+  }
+  .badge-pos-bl {
+    bottom: 22px;
+    left: 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-photo-wrapper {
+    padding: 16px 8px;
+  }
+  .floating-photo-badge {
+    padding: 5px 11px;
+  }
+  .badge-primary-text {
+    font-size: 0.72rem;
+  }
+  .badge-secondary-text {
+    font-size: 0.58rem;
+  }
+  .badge-pos-tl {
+    left: 8px;
+    top: 8px;
+  }
+  .badge-pos-br {
+    right: 8px;
+    bottom: 8px;
+  }
+  .badge-pos-bl {
+    display: none;
+  }
+}
+
+@keyframes floatBobTL {
+  0%, 100% {
+    transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) + 0px), 0) rotate(-1deg);
+  }
+  50% {
+    transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) - 8px), 0) rotate(1deg);
+  }
+}
+
+@keyframes floatBobBR {
+  0%, 100% {
+    transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) + 0px), 0) rotate(1.5deg);
+  }
+  50% {
+    transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) - 9px), 0) rotate(-0.5deg);
+  }
+}
+
+@keyframes floatBobBL {
+  0%, 100% {
+    transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) + 0px), 0);
+  }
+  50% {
+    transform: translate3d(var(--tx, 0px), calc(var(--ty, 0px) - 6px), 0);
+  }
+}
+
+.badge-icon {
+  font-size: 1rem;
+}
+
+.badge-text-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.badge-primary-text {
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: #ffffff;
+}
+
+[data-theme="light"] .badge-primary-text {
+  color: #0f172a;
+}
+
+.badge-secondary-text {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  color: var(--accent-cyan, #38bdf8);
+  font-weight: 600;
+}
+
+[data-theme="light"] .badge-secondary-text {
+  color: var(--accent-blue, #2563eb);
+}
+
+.badge-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: glowPulse 2s infinite;
+}

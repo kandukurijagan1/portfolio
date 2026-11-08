@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="pAttBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#07111e" />
+      <stop offset="50%" stop-color="#0a192f" />
+      <stop offset="100%" stop-color="#0d2438" />
+    </linearGradient>
+    <linearGradient id="emeraldTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <filter id="attGlow">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="800" height="480" fill="url(#pAttBg)" />
+
+  <!-- Ambient glow -->
+  <circle cx="200" cy="140" r="160" fill="#10b981" opacity="0.12" filter="url(#attGlow)" />
+  <circle cx="680" cy="350" r="140" fill="#06b6d4" opacity="0.1" filter="url(#attGlow)" />
+
+  <!-- Left: Main Attendance & Evaluation Screen -->
+  <g transform="translate(60, 45)">
+    <rect width="440" height="390" rx="16" fill="#0f172a" stroke="#334155" stroke-width="2" />
+    
+    <!-- Header -->
+    <rect width="440" height="46" rx="16" fill="#1e293b" />
+    <circle cx="24" cy="23" r="5" fill="#ef4444" />
+    <circle cx="40" cy="23" r="5" fill="#f59e0b" />
+    <circle cx="56" cy="23" r="5" fill="#10b981" />
+    <text x="75" y="28" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">EvalTrack • Attendance Marking &amp; Judge Rubric System</text>
+    <rect x="340" y="12" width="85" height="22" rx="11" fill="#10b981" fill-opacity="0.2" stroke="#10b981" />
+    <text x="352" y="27" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">ACTIVE</text>
+
+    <!-- Session & Check-in QR Banner -->
+    <rect x="22" y="60" width="396" height="52" rx="10" fill="#0b0f19" stroke="#10b981" stroke-width="1.5" />
+    <text x="36" y="82" fill="#94a3b8" font-family="sans-serif" font-size="10">SESSION: ROUND 2 JURY EVALUATION (HALL A)</text>
+    <text x="36" y="103" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="15" font-weight="bold">✓ CHECKED-IN: 142 / 150 PARTICIPANTS (94.6%)</text>
+    <rect x="330" y="70" width="76" height="32" rx="6" fill="#1e293b" stroke="#10b981" />
+    <text x="340" y="91" fill="#10b981" font-family="sans-serif" font-size="11" font-weight="bold">QR SCAN</text>
+
+    <!-- Evaluation Matrix / Scoreboard Table -->
+    <rect x="22" y="126" width="396" height="28" rx="6" fill="#1e293b" />
+    <text x="32" y="144" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="bold">TEAM</text>
+    <text x="140" y="144" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="bold">ATTENDANCE</text>
+    <text x="235" y="144" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="bold">INNOVATION</text>
+    <text x="315" y="144" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="bold">TECH</text>
+    <text x="365" y="144" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="bold">TOTAL</text>
+
+    <!-- Rows -->
+    <g transform="translate(22, 168)" font-family="sans-serif" font-size="11" fill="#e2e8f0">
+      <text x="10" y="0">Team CyberNova</text>
+      <text x="125" y="0" fill="#10b981">● Present (4/4)</text>
+      <text x="225" y="0">9.5/10</text>
+      <text x="300" y="0">9.0/10</text>
+      <text x="350" y="0" font-weight="bold" fill="#38bdf8">92.5</text>
+      <line x1="0" y1="12" x2="396" y2="12" stroke="#1e293b" />
+
+      <text x="10" y="32">Team AI Nexus</text>
+      <text x="125" y="32" fill="#10b981">● Present (4/4)</text>
+      <text x="225" y="32">9.0/10</text>
+      <text x="300" y="32">8.5/10</text>
+      <text x="350" y="32" font-weight="bold" fill="#38bdf8">87.5</text>
+      <line x1="0" y1="44" x2="396" y2="44" stroke="#1e293b" />
+
+      <text x="10" y="64">Team CodeForge</text>
+      <text x="125" y="64" fill="#10b981">● Present (3/3)</text>
+      <text x="225" y="64">8.5/10</text>
+      <text x="300" y="64">8.0/10</text>
+      <text x="350" y="64" font-weight="bold" fill="#38bdf8">83.0</text>
+      <line x1="0" y1="76" x2="396" y2="76" stroke="#1e293b" />
+    </g>
+
+    <!-- Judge Grading Rubric Action Bar -->
+    <rect x="22" y="278" width="396" height="92" rx="10" fill="#0b0f19" stroke="#1e293b" />
+    <text x="36" y="306" fill="#94a3b8" font-family="sans-serif" font-size="11">Current Evaluator: Dr. R. Sundaram (Judge 03)</text>
+    <text x="36" y="342" fill="#38bdf8" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="bold">LEADERBOARD AUTO-SYNCED</text>
+    
+    <rect x="260" y="304" width="140" height="42" rx="8" fill="url(#emeraldTeal)" />
+    <text x="275" y="330" fill="#020617" font-family="sans-serif" font-size="12" font-weight="bold">SUBMIT SCORE [F8]</text>
+  </g>
+
+  <!-- Right: Real-time Leaderboard & Criteria -->
+  <g transform="translate(525, 45)">
+    <rect width="225" height="185" rx="14" fill="#0f172a" stroke="#10b981" stroke-width="1.5" />
+    <text x="20" y="32" fill="#e2e8f0" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">Live Evaluation Criteria</text>
+    
+    <rect x="20" y="48" width="185" height="52" rx="8" fill="#1e293b" />
+    <text x="32" y="68" fill="#94a3b8" font-family="sans-serif" font-size="10">EVALUATION WEIGHTAGE</text>
+    <text x="32" y="89" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="15" font-weight="bold">UI/UX + Code (40%)</text>
+
+    <rect x="20" y="112" width="185" height="52" rx="8" fill="#1e293b" />
+    <text x="32" y="132" fill="#94a3b8" font-family="sans-serif" font-size="10">ORAL PITCH &amp; Q/A</text>
+    <text x="32" y="153" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="15" font-weight="bold">Problem Solved (60%)</text>
+
+    <!-- Export & Reports -->
+    <g transform="translate(0, 205)">
+      <rect width="225" height="185" rx="14" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+      <text x="20" y="32" fill="#38bdf8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="bold">Instant Reports &amp; Exports</text>
+      <text x="20" y="58" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• Attendance Excel / CSV</text>
+      <text x="20" y="82" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• Consolidated Marks Sheet</text>
+      <text x="20" y="106" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="11">• Certificate Eligibility List</text>
+      <rect x="20" y="130" width="185" height="34" rx="6" fill="#1e293b" stroke="#10b981" />
+      <text x="35" y="152" fill="#10b981" font-family="sans-serif" font-size="11" font-weight="bold">Download Excel / PDF</text>
+    </g>
+  </g>
+</svg>
