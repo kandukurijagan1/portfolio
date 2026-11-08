@@ -165,7 +165,7 @@ function initContactForm() {
         // Launch subtle celebratory particles
         launchCelebrationParticles();
 
-        showToast("🚀 Message delivered! Jagan will get back to you soon.", "success");
+        showToast("🚀 Message delivered! A kind confirmation email was also sent to you.", "success");
         contactForm.reset();
         submitButton.disabled = false;
         submitButton.innerHTML = originalBtnHtml;
