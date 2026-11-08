@@ -118,8 +118,10 @@ function initCertificates() {
 
     container.innerHTML = filtered.map(c => `
       <div class="cert-card" data-category="${c.category}">
-        <div class="cert-preview-box" data-cert-id="${c.id}" title="Click to view full certificate">
-          <img src="${c.preview}" alt="${c.title}" class="cert-preview-img" loading="lazy">
+        <div class="cert-preview-box is-loading" data-cert-id="${c.id}" title="Click to view full certificate">
+          <img src="${encodeURI(c.preview)}" alt="${c.title}" class="cert-preview-img" loading="lazy"
+               onload="this.classList.add('loaded'); this.parentElement.classList.remove('is-loading');"
+               onerror="this.classList.add('error'); this.parentElement.classList.remove('is-loading'); if (this.src !== '${encodeURI(c.file)}') { this.src = '${encodeURI(c.file)}'; }">
           <div class="cert-preview-overlay">
             <span class="cert-zoom-btn">🔍 View Certificate</span>
           </div>
@@ -222,12 +224,14 @@ function initCertificates() {
     if (titleEl) titleEl.textContent = cert.title;
     if (issuerEl) issuerEl.textContent = `${cert.issuer} • ${cert.badge}`;
     if (imgEl) {
-      imgEl.src = cert.preview;
+      const isPdf = cert.file.toLowerCase().endsWith('.pdf');
+      const modalSrc = isPdf ? cert.preview : cert.file;
+      imgEl.src = encodeURI(modalSrc);
       imgEl.alt = cert.title;
     }
     if (metaEl) metaEl.textContent = `Issued: ${cert.date} | Credential Ref: ${cert.credentialId}`;
     if (dlBtn) {
-      dlBtn.href = cert.file;
+      dlBtn.href = encodeURI(cert.file);
       dlBtn.setAttribute("download", cert.file.split("/").pop());
     }
 

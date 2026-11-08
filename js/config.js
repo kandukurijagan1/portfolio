@@ -243,7 +243,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "Python Life (Kiran Sagar, Founding Member)",
       date: "06 Jan 2026",
       credentialId: "PL-FSP-2026",
-      preview: "assets/certificates/full stack.png",
+      preview: "assets/certificates/thumbnails/cert-fullstack-python.jpg",
       file: "assets/certificates/full stack.png",
       badge: "Professional Certification",
       tags: ["Python", "Full Stack", "Backend", "Web Development"]
@@ -255,7 +255,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "Jeppiaar Engineering College (NAAC Sponsored)",
       date: "28–29 Nov 2025",
       credentialId: "ICONSTEM-2025-RP",
-      preview: "assets/certificates/international conference jpr college_rotated.jpg",
+      preview: "assets/certificates/thumbnails/cert-iconstem-conference.jpg",
       file: "assets/certificates/international conference jpr college.jpg",
       badge: "International Conference",
       tags: ["Research Paper", "Peer-Reviewed", "ICONSTEM 2025", "NAAC Sponsored"]
@@ -267,7 +267,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "R.M.K. Engineering College (CHIPCOMM'26)",
       date: "09 Feb 2026",
       credentialId: "RMK-CHIPCOMM-26",
-      preview: "assets/certificates/thought spark(Paper Presentation)_preview.png",
+      preview: "assets/certificates/thumbnails/cert-thoughtspark.jpg",
       file: "assets/certificates/thought spark(Paper Presentation).pdf",
       badge: "National Symposium",
       tags: ["Paper Presentation", "CHIPCOMM'26", "Autonomous Institution"]
@@ -279,7 +279,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "Gujarat Technological University (GTU-ITR)",
       date: "23 Dec 2025",
       credentialId: "GTU-ITR/NMD/2025/1073",
-      preview: "assets/certificates/Maths day_.jpg",
+      preview: "assets/certificates/thumbnails/cert-maths-day.jpg",
       file: "assets/certificates/Maths day_.jpg",
       badge: "NAAC A+ University",
       tags: ["Mathematics", "Logical Reasoning", "GTU", "National Competition"]
@@ -291,7 +291,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "SIMATS Engineering (Team Dream Hackers)",
       date: "13 Feb 2026",
       credentialId: "SIMATS-DPS-13FEB",
-      preview: "assets/certificates/hackaton college.jpeg",
+      preview: "assets/certificates/thumbnails/cert-win-daily-1.jpg",
       file: "assets/certificates/hackaton college.jpeg",
       badge: "🏆 1st Place Winner",
       tags: ["Winner", "Team Dream Hackers", "Data Structures", "Speed Coding"]
@@ -303,7 +303,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "SIMATS Engineering (Team Dream Hackers)",
       date: "14 Feb 2026",
       credentialId: "SIMATS-DPS-14FEB",
-      preview: "assets/certificates/hackaton college1.jpeg",
+      preview: "assets/certificates/thumbnails/cert-win-daily-2.jpg",
       file: "assets/certificates/hackaton college1.jpeg",
       badge: "🏆 1st Place Winner",
       tags: ["Winner", "Team Dream Hackers", "Algorithms", "Optimization"]
@@ -315,7 +315,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "SIMATS Engineering (Team Dream Hackers)",
       date: "23 Feb 2026",
       credentialId: "SIMATS-DPS-23FEB",
-      preview: "assets/certificates/daily problem statement hackathon 3.jpg",
+      preview: "assets/certificates/thumbnails/cert-win-daily-3.jpg",
       file: "assets/certificates/daily problem statement hackathon 3.jpg",
       badge: "🏆 1st Place Winner",
       tags: ["Winner", "Team Dream Hackers", "Rapid Problem Solving"]
@@ -327,7 +327,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "SIMATS Engineering (Team Code Coven)",
       date: "12 Mar 2026",
       credentialId: "SIMATS-DPS-12MAR",
-      preview: "assets/certificates/Daily problem solving.jpg",
+      preview: "assets/certificates/thumbnails/cert-win-daily-4.jpg",
       file: "assets/certificates/Daily problem solving.jpg",
       badge: "🏆 1st Place Winner",
       tags: ["Winner", "Team Code Coven", "Algorithmic Precision"]
@@ -339,7 +339,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "SIMATS Engineering (Team Code Coven)",
       date: "14 Mar 2026",
       credentialId: "SIMATS-DPS-14MAR",
-      preview: "assets/certificates/Daily problem solving(1).jpg",
+      preview: "assets/certificates/thumbnails/cert-win-daily-5.jpg",
       file: "assets/certificates/Daily problem solving(1).jpg",
       badge: "🏆 1st Place Winner",
       tags: ["Winner", "Team Code Coven", "Collaborative Coding"]
@@ -351,7 +351,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "SIMATS Engineering (Team Code Coven)",
       date: "16 Mar 2026",
       credentialId: "SIMATS-DPS-16MAR",
-      preview: "assets/certificates/Daily problem solving(2).jpg",
+      preview: "assets/certificates/thumbnails/cert-win-daily-6.jpg",
       file: "assets/certificates/Daily problem solving(2).jpg",
       badge: "🏆 1st Place Winner",
       tags: ["Winner", "Team Code Coven", "System Logic"]
@@ -363,7 +363,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "SIMATS Engineering (Team Code Coven)",
       date: "19 Mar 2026",
       credentialId: "SIMATS-DPS-19MAR",
-      preview: "assets/certificates/daily problem solving_.jpg",
+      preview: "assets/certificates/thumbnails/cert-win-daily-7.jpg",
       file: "assets/certificates/daily problem solving_.jpg",
       badge: "🏆 1st Place Winner",
       tags: ["Winner", "Team Code Coven", "Architecture"]
@@ -375,7 +375,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "IEEE Student Branch & SDG Cell, Panimalar Eng. College",
       date: "06–07 Mar 2026",
       credentialId: "IEEE-SDGTHON-2026",
-      preview: "assets/certificates/panimalar hackathon__preview.png",
+      preview: "assets/certificates/thumbnails/cert-sdgthon-panimalar.jpg",
       file: "assets/certificates/panimalar hackathon_.pdf",
       badge: "IEEE 24-Hour Hackathon",
       tags: ["IEEE", "UN SDGs", "24h Hackathon", "Full Stack"]
@@ -387,7 +387,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "SIMATS Engineering (Dept. of Scientific Computing)",
       date: "26 Feb 2026",
       credentialId: "SIMATS-INNOBYTE-26",
-      preview: "assets/certificates/innobytes hackathon.png",
+      preview: "assets/certificates/thumbnails/cert-innobyte.jpg",
       file: "assets/certificates/innobytes hackathon.png",
       badge: "AI Hackathon",
       tags: ["AI", "Scientific Computing", "Machine Learning"]
@@ -399,7 +399,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "SIMATS Engineering (Dept. of Nanobiomaterials)",
       date: "18 Mar 2026",
       credentialId: "SIMATS-CODEVOLT-26",
-      preview: "assets/certificates/codevolt hackathon.jpg",
+      preview: "assets/certificates/thumbnails/cert-codevolt.jpg",
       file: "assets/certificates/codevolt hackathon.jpg",
       badge: "Engineering Hackathon",
       tags: ["Engineering", "Biomaterials", "Computational Models"]
@@ -411,7 +411,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "UnsaidTalks Education Pvt. Ltd.",
       date: "14 Feb 2026",
       credentialId: "UNSAID-AICODE-26",
-      preview: "assets/certificates/AI_Coding_Assignment_Evaluator_Hackathon.png",
+      preview: "assets/certificates/thumbnails/cert-ai-evaluator.jpg",
       file: "assets/certificates/AI_Coding_Assignment_Evaluator_Hackathon.png",
       badge: "Applied AI Track",
       tags: ["AI Evaluation", "Python", "Automated Grading"]
@@ -423,7 +423,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "UnsaidTalks Education Pvt. Ltd.",
       date: "07 Mar 2026",
       credentialId: "UNSAID-EMOTION-26",
-      preview: "assets/certificates/Emotion-Aware_Encryption_Hackathon.png",
+      preview: "assets/certificates/thumbnails/cert-emotion-encryption.jpg",
       file: "assets/certificates/Emotion-Aware_Encryption_Hackathon.png",
       badge: "Cybersecurity Track",
       tags: ["Cryptography", "Emotion AI", "Security"]
@@ -435,7 +435,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "UnsaidTalks Education Pvt. Ltd.",
       date: "13 Feb 2026",
       credentialId: "UNSAID-GITANALYZE-26",
-      preview: "assets/certificates/GitHub_Portfolio_Analyzer_&_Enhancer_Hackathon.png",
+      preview: "assets/certificates/thumbnails/cert-github-analyzer.jpg",
       file: "assets/certificates/GitHub_Portfolio_Analyzer_&_Enhancer_Hackathon.png",
       badge: "Developer Tools",
       tags: ["GitHub API", "Profile Optimization", "Developer Metrics"]
@@ -447,7 +447,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "Saveetha School of Engineering",
       date: "2025–2026",
       credentialId: "SSE-HACK-2026",
-      preview: "assets/certificates/hackaton_preview.png",
+      preview: "assets/certificates/thumbnails/cert-collegiate-hackathon.jpg",
       file: "assets/certificates/hackaton.pdf",
       badge: "Collegiate Hackathon",
       tags: ["Software Engineering", "Team Hackathon", "Saveetha"]
@@ -459,7 +459,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "Saveetha School of Engineering",
       date: "2025–2026",
       credentialId: "SSE-QUIZ-2026",
-      preview: "assets/certificates/Technical Quiz_preview.png",
+      preview: "assets/certificates/thumbnails/cert-technical-quiz.jpg",
       file: "assets/certificates/Technical Quiz.pdf",
       badge: "Technical Contest",
       tags: ["Computer Science", "Core Concepts", "Algorithms"]
@@ -471,7 +471,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "Saveetha School of Engineering",
       date: "2025–2026",
       credentialId: "SSE-PAPER-2026",
-      preview: "assets/certificates/Paper Presentation_preview.png",
+      preview: "assets/certificates/thumbnails/cert-paper-presentation.jpg",
       file: "assets/certificates/Paper Presentation.pdf",
       badge: "Technical Symposium",
       tags: ["Research", "Technical Writing", "Presentation"]
@@ -483,7 +483,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "Saveetha School of Engineering",
       date: "2025–2026",
       credentialId: "SSE-POSTER-2026",
-      preview: "assets/certificates/Poster Design_preview.png",
+      preview: "assets/certificates/thumbnails/cert-poster-design.jpg",
       file: "assets/certificates/Poster Design.pdf",
       badge: "Design Competition",
       tags: ["Poster Design", "UI/UX", "Creative Visuals"]
@@ -495,7 +495,7 @@ const PORTFOLIO_CONFIG = {
       issuer: "Saveetha School of Engineering",
       date: "2025–2026",
       credentialId: "SSE-ESPORTS-2026",
-      preview: "assets/certificates/free fire_preview.png",
+      preview: "assets/certificates/thumbnails/cert-freefire.jpg",
       file: "assets/certificates/free fire.pdf",
       badge: "Esports Tournament",
       tags: ["Strategy", "Team Coordination", "Competitive Gaming"]
