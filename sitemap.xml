@@ -4,56 +4,94 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  <!-- Homepage & Main Portfolio Entry -->
   <url>
-    <loc>https://kandukurijagan1.github.io/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <loc>https://kandujuri-jagan-portfolio.netlify.app/</loc>
+    <lastmod>2026-11-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://kandukurijagan1.github.io/assets/images/profile.jpg</image:loc>
+      <image:loc>https://kandujuri-jagan-portfolio.netlify.app/assets/images/profile.jpg</image:loc>
       <image:title>Kandukuri Jagan - Full Stack Developer &amp; Synora'26 Main Lead</image:title>
       <image:caption>Official portrait of Kandukuri Jagan, 3rd Year B.E. Computer Science at Saveetha University, Chennai.</image:caption>
     </image:image>
   </url>
+
+  <!-- About Section -->
   <url>
-    <loc>https://kandukurijagan1.github.io/#about</loc>
-    <lastmod>2026-11-07</lastmod>
+    <loc>https://kandujuri-jagan-portfolio.netlify.app/#about</loc>
+    <lastmod>2026-11-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+
+  <!-- Skills Section -->
   <url>
-    <loc>https://kandukurijagan1.github.io/#projects</loc>
-    <lastmod>2026-11-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://kandukurijagan1.github.io/#education</loc>
-    <lastmod>2026-11-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://kandukurijagan1.github.io/#achievements</loc>
-    <lastmod>2026-11-07</lastmod>
+    <loc>https://kandujuri-jagan-portfolio.netlify.app/#skills</loc>
+    <lastmod>2026-11-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
+
+  <!-- Projects & Engineering Lab -->
   <url>
-    <loc>https://kandukurijagan1.github.io/#certifications</loc>
-    <lastmod>2026-11-07</lastmod>
+    <loc>https://kandujuri-jagan-portfolio.netlify.app/#projects</loc>
+    <lastmod>2026-11-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://kandujuri-jagan-portfolio.netlify.app/assets/images/synora26.jpg</image:loc>
+      <image:title>Synora'26 National Hackathon Management Platform</image:title>
+      <image:caption>Complete technical suite built by Kandukuri Jagan for Synora'26 Hackathon (80+ teams, 400+ participants).</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://kandujuri-jagan-portfolio.netlify.app/assets/images/aaryan-aqua.jpg</image:loc>
+      <image:title>Aaryan Aqua Needs - Cloud GST Billing &amp; Inventory Hub</image:title>
+      <image:caption>Deployed enterprise client billing software with automated WhatsApp PDF invoices and dynamic UPI QR.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://kandujuri-jagan-portfolio.netlify.app/assets/images/ibvap-surveillance.jpg</image:loc>
+      <image:title>Facial-Based Crime Monitoring &amp; Alert System</image:title>
+      <image:caption>Smart India Hackathon computer vision platform with multi-year age-invariant face recognition.</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Education Section -->
+  <url>
+    <loc>https://kandujuri-jagan-portfolio.netlify.app/#education</loc>
+    <lastmod>2026-11-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Achievements Section -->
+  <url>
+    <loc>https://kandujuri-jagan-portfolio.netlify.app/#achievements</loc>
+    <lastmod>2026-11-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Certifications Section -->
+  <url>
+    <loc>https://kandujuri-jagan-portfolio.netlify.app/#certifications</loc>
+    <lastmod>2026-11-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
+
+  <!-- Contact Section -->
   <url>
-    <loc>https://kandukurijagan1.github.io/#contact</loc>
-    <lastmod>2026-11-07</lastmod>
+    <loc>https://kandujuri-jagan-portfolio.netlify.app/#contact</loc>
+    <lastmod>2026-11-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Official PDF Resume -->
   <url>
-    <loc>https://kandukurijagan1.github.io/assets/resume.pdf</loc>
-    <lastmod>2026-11-07</lastmod>
+    <loc>https://kandujuri-jagan-portfolio.netlify.app/assets/resume.pdf</loc>
+    <lastmod>2026-11-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

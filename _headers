@@ -1,0 +1,30 @@
+# Netlify Production Headers Configuration for Kandukuri Jagan Portfolio
+
+# 1. Global Security & Crawler Headers
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), camera=(), microphone=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# 2. Immutable Long-Term Caching for Static Assets (CSS, JS, Fonts, Images)
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 3. HTML, Sitemap, Robots Caching (Always fresh)
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/sitemap.xml
+  Cache-Control: public, max-age=86400, must-revalidate
+
+/robots.txt
+  Cache-Control: public, max-age=86400, must-revalidate

@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initBackToTop();
   initCurrentYear();
   initPhotoLightbox();
+  initSEODynamicSync();
 });
 
 /**
@@ -236,3 +237,17 @@ function initPhotoLightbox() {
   });
 }
 
+
+
+/**
+ * 8. Dynamic Production Canonical & Meta Sync (Custom Domain & Preview Compatibility)
+ */
+function initSEODynamicSync() {
+  if (window.location.protocol === 'https:' && window.location.hostname !== 'localhost') {
+    const origin = window.location.origin;
+    const canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink && !canonicalLink.getAttribute('href').startsWith(origin)) {
+      canonicalLink.setAttribute('href', origin + '/');
+    }
+  }
+}

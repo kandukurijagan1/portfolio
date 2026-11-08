@@ -88,7 +88,7 @@ const PORTFOLIO_CONFIG = {
       ],
       detailedDesc: "Built and deployed as the central technological backbone for Synora'26, a flagship collegiate hackathon where I served as the Main Tech Lead and Main Event Role overseeing 80+ competing teams. Designed and operated four fully integrated platforms covering the entire hackathon lifecycle from initial registration to live QR venue check-ins, multi-judge evaluation matrices, and instant tamper-proof certificate delivery.",
       github: "https://github.com/kandukurijagan1/hackathon-registration-portal",
-      demo: "https://kandukurijagan1.github.io/hackathon-portal",
+      demo: "#projects",
       architecture: [
         "Module 1 (Registration): React.js + Flask + MySQL managing 80+ teams, invitations, and tracks",
         "Module 2 (Attendance): Dynamic time-based QR code generation & scanner for hall check-ins",
@@ -137,7 +137,7 @@ const PORTFOLIO_CONFIG = {
       ],
       detailedDesc: "A complete AI assistant that controls desktop functions, answers complex questions through web searches, and automates mundane developer workflows. Features real-time voice capture, intent classification, automated browser commands, PDF export of interaction transcripts, and asynchronous notification delivery through a Telegram bot.",
       github: "https://github.com/kandukurijagan1/ai-desktop-assistant",
-      demo: "https://kandukurijagan1.github.io/ai-desktop-assistant",
+      demo: "#projects",
       architecture: [
         "Audio Engine: PyAudio microphone capture + Google SpeechRecognition API",
         "Intent Parser: Pattern matching & natural language task dispatcher",
@@ -161,7 +161,7 @@ const PORTFOLIO_CONFIG = {
       ],
       detailedDesc: "An advanced computer vision security solution engineered for border surveillance and municipal crime monitoring (SIH // MHA). The platform solves cold cases by identifying elderly individuals from youth reference photos across a +54 to +65 year temporal age gap using 68-landmark craniofacial bone invariance and ArcFace 512D deep embeddings. Critically, the platform is integrated with WhatsApp Business API and Telegram bot webhooks to immediately dispatch forensic match alerts, high-resolution snapshots, and court-admissible Section 65B FIR documents directly to duty officers.",
       github: "https://github.com/kandukurijagan1/facial-crime-monitoring-system",
-      demo: "https://kandukurijagan1.github.io/crime-monitoring",
+      demo: "#projects",
       architecture: [
         "Detection & Biometrics: 68-landmark craniofacial bone invariance + ArcFace 512D embeddings",
         "Messaging Integration: WhatsApp Business API + Telegram Bot Webhooks for real-time alert dispatch",

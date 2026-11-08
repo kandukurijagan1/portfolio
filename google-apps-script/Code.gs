@@ -58,7 +58,7 @@ function doPost(e) {
       '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f19; color: #f8fafc; border-radius: 14px; overflow: hidden; border: 1px solid #1e293b; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">' +
         '<div style="background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%); padding: 26px 28px; text-align: center;">' +
           '<h1 style="margin: 0; font-size: 22px; font-weight: 800; color: #ffffff;">New Portfolio Inquiry</h1>' +
-          '<p style="margin: 6px 0 0; font-size: 13px; color: #e0e7ff;">Sent via kandukurijagan1.github.io</p>' +
+          '<p style="margin: 6px 0 0; font-size: 13px; color: #e0e7ff;">Sent via kandujuri-jagan-portfolio.netlify.app</p>' +
         '</div>' +
         '<div style="padding: 28px 24px;">' +
           '<table style="width: 100%; border-collapse: collapse; margin-bottom: 22px;">' +

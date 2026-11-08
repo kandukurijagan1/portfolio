@@ -1,17 +1,32 @@
-# Robots.txt for Kandukuri Jagan's Official Portfolio
-# Target: https://kandukurijagan1.github.io/
+# Robots.txt for Kandukuri Jagan's Official Production Portfolio
+# Primary Production URL: https://kandujuri-jagan-portfolio.netlify.app/
 
 User-agent: *
 Allow: /
 Allow: /assets/
 Allow: /assets/images/
+Allow: /assets/certificates/
 Allow: /assets/resume.pdf
 Allow: /css/
 Allow: /js/
 
-# Crawl-delay for polite crawling
-Crawl-delay: 1
+# Explicit search engine crawler allowances
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /assets/images/
+Allow: /assets/certificates/
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
 
 # Host and Sitemap locations for Google, Bing, Yahoo, Yandex, DuckDuckGo
-Host: https://kandukurijagan1.github.io
-Sitemap: https://kandukurijagan1.github.io/sitemap.xml
+Host: https://kandujuri-jagan-portfolio.netlify.app
+Sitemap: https://kandujuri-jagan-portfolio.netlify.app/sitemap.xml

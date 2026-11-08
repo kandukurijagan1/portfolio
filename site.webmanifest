@@ -1,12 +1,15 @@
 {
   "name": "Kandukuri Jagan | Full Stack Developer",
   "short_name": "KJ Portfolio",
-  "description": "Official Portfolio of Kandukuri Jagan - Full Stack Developer, Python Specialist & Synora'26 Main Lead",
+  "description": "Official Portfolio of Kandukuri Jagan - Full Stack Developer, 9.04 CGPA at Saveetha University, Synora'26 Main Lead",
   "start_url": "/",
+  "scope": "/",
+  "id": "/?source=pwa",
   "display": "standalone",
   "background_color": "#07090e",
-  "theme_color": "#2563eb",
+  "theme_color": "#07090e",
   "orientation": "portrait-primary",
+  "categories": ["portfolio", "technology", "developer", "education"],
   "icons": [
     {
       "src": "assets/images/favicon.svg",

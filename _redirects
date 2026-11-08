@@ -1,0 +1,3 @@
+# Netlify Redirects for Kandukuri Jagan Portfolio
+/resume    /assets/resume.pdf    302
+/*         /index.html           200
