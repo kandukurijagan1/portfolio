@@ -4,7 +4,7 @@
  * ==============================================================================
  * 
  * Target Email : kandukurijagan99@gmail.com
- * Google Sheet : Bound directly to your "portfolio" Google Sheet (Extensions > Apps Script)
+ * Web App URL  : https://script.google.com/macros/s/AKfycbzvr7Qd1hzkNH1CqzrYm1Vi44mFqb54VlYmsNspuiZqnmit_zksOeXJyeplg2cTNAUk/exec
  * 
  * Workflows handled automatically upon visitor submission:
  * 1. 📊 Saves visitor data into Google Sheet (Timestamp, Name, Email ID, Subject, Message)
