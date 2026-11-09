@@ -1,30 +1,125 @@
 /**
  * ==============================================================================
- * GOOGLE APPS SCRIPT - PORTFOLIO CONTACT FORM DISPATCHER
- * WITH AUTOMATED CONFIRMATION NOTICE TO VISITORS
+ * GOOGLE APPS SCRIPT - PORTFOLIO CONTACT FORM DISPATCHER & SHEETS RECORDER
+ * 
+ * Features:
+ * 1. 📊 Auto-saves every form submission into Google Sheet (Name, Email, Subject, Message, Timestamp)
+ * 2. 🚀 Dispatches primary inquiry notification to Kandukuri Jagan's inbox
+ * 3. ✉️ Sends automated kind confirmation to visitor with custom communication notice
  * 
  * Author: Kandukuri Jagan (Saveetha University • Synora'26 Main Lead)
  * Target Email: kandukurijagan99@gmail.com
- * Web App URL: https://script.google.com/macros/s/AKfycbyp5OJcMy-pvZV3n2nA2D-dgNcX91i1h9d_HHxhw1uTBItKFPw1tgdwcCY7LYY_0i6P/exec
+ * Google Sheet: https://docs.google.com/spreadsheets/d/1QS8lblW2MVVpmMuKUjjOzROefO9hT41hXQLbtWGqUY/edit
  * ==============================================================================
  */
 
 // Target email address where Kandukuri Jagan receives all portfolio messages
 var RECIPIENT_EMAIL = "kandukurijagan99@gmail.com";
 
+// Google Sheet ID from your spreadsheet URL
+var SPREADSHEET_ID = "1QS8lblW2MVVpmMuKUjjOzROefO9hT41hXQLbtWGqUY";
+
 /**
- * ⚡ TEST FUNCTION
- * Run this function once in the Apps Script editor to test and authorize permissions
+ * ⚡ TEST FUNCTION 1: EMAIL DISPATCH
+ * Run this function once in the Apps Script editor to test email permissions
  */
 function testSend() {
   var subject = "✅ [Portfolio Test] Contact Dispatcher is Active!";
   var body = "Hi Jagan,\n\nYour portfolio contact form script is active.\n" +
              "Target Inbox: " + RECIPIENT_EMAIL + "\n" +
              "Timestamp: " + Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy, hh:mm a") + " IST\n\n" +
-             "Parallel auto-confirmations will be dispatched to visitors with your custom notice.";
+             "Parallel auto-confirmations and Google Sheet row recording are enabled.";
 
   MailApp.sendEmail(RECIPIENT_EMAIL, subject, body);
   Logger.log("✅ Success! Test email dispatched to " + RECIPIENT_EMAIL);
+}
+
+/**
+ * ⚡ TEST FUNCTION 2: GOOGLE SHEET RECORDING
+ * Run this function once in the Apps Script editor to authorize and verify Google Sheet access!
+ */
+function testSheet() {
+  var timestamp = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy, hh:mm a") + " IST";
+  var success = saveToSheet(
+    "Jagan (Test Visitor)",
+    "kandukurijagan99@gmail.com",
+    "Portfolio Sheet Connection Test",
+    "This row verifies that contact form submissions are automatically saved to your Google Sheet!",
+    timestamp
+  );
+  if (success) {
+    Logger.log("✅ Success! Test row successfully added to your Google Sheet: " + SPREADSHEET_ID);
+  } else {
+    Logger.log("❌ Failed to add row. Check Google Sheet permissions or spreadsheet ID.");
+  }
+}
+
+/**
+ * Helper function to open the target Google Spreadsheet and sheet
+ */
+function getTargetSheet() {
+  var ss;
+  try {
+    if (SPREADSHEET_ID && SPREADSHEET_ID.trim() !== "") {
+      ss = SpreadsheetApp.openById(SPREADSHEET_ID.trim());
+    } else {
+      ss = SpreadsheetApp.getActiveSpreadsheet();
+    }
+  } catch (err) {
+    try {
+      ss = SpreadsheetApp.getActiveSpreadsheet();
+    } catch (e) {
+      Logger.log("⚠️ Could not open spreadsheet: " + err.toString());
+      return null;
+    }
+  }
+  if (!ss) return null;
+  return ss.getSheetByName("Sheet1") || ss.getActiveSheet() || ss.getSheets()[0];
+}
+
+/**
+ * Saves visitor submission data directly into the Google Sheet
+ */
+function saveToSheet(name, email, subject, message, timestamp) {
+  try {
+    var sheet = getTargetSheet();
+    if (!sheet) {
+      Logger.log("⚠️ Target sheet not found.");
+      return false;
+    }
+
+    // Auto-initialize header row if the sheet is completely empty
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["Timestamp", "Name", "Email ID", "Subject", "Message"]);
+      var headerRange = sheet.getRange(1, 1, 1, 5);
+      headerRange.setFontWeight("bold");
+      headerRange.setBackground("#0d131f");
+      headerRange.setFontColor("#38bdf8");
+      headerRange.setHorizontalAlignment("center");
+      sheet.setFrozenRows(1);
+    }
+
+    // Check if the user set up 4 columns with Name in Column A
+    var lastCol = sheet.getLastColumn();
+    if (lastCol > 0) {
+      var headerValues = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+      var firstHeader = (headerValues[0] || "").toString().toLowerCase();
+
+      // If user started row 1 with Name (4 columns: Name, Email ID, Subject, Message)
+      if (firstHeader.indexOf("name") !== -1) {
+        sheet.appendRow([name, email, subject, message]);
+        return true;
+      }
+    }
+
+    // Default 5 columns layout: Timestamp, Name, Email ID, Subject, Message
+    sheet.appendRow([timestamp, name, email, subject, message]);
+    return true;
+
+  } catch (err) {
+    Logger.log("⚠️ Google Sheet logging error: " + err.toString());
+    return false;
+  }
 }
 
 /**
@@ -54,7 +149,12 @@ function doPost(e) {
     var timestamp = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy, hh:mm a") + " IST";
 
     // =========================================================================
-    // 1. DISPATCH TO KANDUKURI JAGAN (Primary Inbox Notification)
+    // 1. AUTOMATICALLY SAVE TO GOOGLE SHEET
+    // =========================================================================
+    var sheetSaved = saveToSheet(name, email, subject, message, timestamp);
+
+    // =========================================================================
+    // 2. DISPATCH TO KANDUKURI JAGAN (Primary Inbox Notification)
     // =========================================================================
     var emailSubject = "🚀 [Portfolio Message] " + subject + " — from " + name;
 
@@ -66,7 +166,7 @@ function doPost(e) {
         '</div>' +
         '<div style="padding: 26px 24px;">' +
           '<div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 10px 14px; margin-bottom: 20px;">' +
-            '<span style="color: #10b981; font-size: 13px; font-weight: 700;">✅ Automated confirmation receipt was dispatched to: ' + email + '</span>' +
+            '<span style="color: #10b981; font-size: 13px; font-weight: 700;">✅ Logged in Google Sheet • Confirmation receipt dispatched to: ' + email + '</span>' +
           '</div>' +
           '<table style="width: 100%; border-collapse: collapse; margin-bottom: 22px;">' +
             '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px; width: 90px;"><strong>Sender:</strong></td><td style="padding: 8px 0; color: #ffffff; font-size: 15px; font-weight: 700;">' + name + '</td></tr>' +
@@ -98,7 +198,7 @@ function doPost(e) {
     });
 
     // =========================================================================
-    // 2. PARALLEL DISPATCH TO VISITOR (With Automated Communication Notice)
+    // 3. PARALLEL DISPATCH TO VISITOR (With Automated Communication Notice)
     // =========================================================================
     if (email && email.indexOf("@") !== -1 && email.indexOf(".") !== -1) {
       try {
@@ -154,7 +254,8 @@ function doPost(e) {
     // Return instant success JSON
     return ContentService.createTextOutput(JSON.stringify({
       result: "success",
-      message: "Dispatched instantly to " + RECIPIENT_EMAIL,
+      message: "Dispatched successfully to " + RECIPIENT_EMAIL,
+      sheetSaved: sheetSaved,
       autoReplySent: true
     })).setMimeType(ContentService.MimeType.JSON);
 
@@ -173,6 +274,7 @@ function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({
     status: "online",
     recipient: RECIPIENT_EMAIL,
-    service: "Portfolio Contact Form Dispatcher with Parallel Auto-Reply"
+    spreadsheetId: SPREADSHEET_ID,
+    service: "Portfolio Contact Form Dispatcher with Sheets Logging & Parallel Auto-Reply"
   })).setMimeType(ContentService.MimeType.JSON);
 }
