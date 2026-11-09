@@ -77,12 +77,12 @@
   <link rel="dns-prefetch" href="https://mail.google.com">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="css/style.css?v=6.9">
-  <link rel="stylesheet" href="css/components.css?v=6.9">
-  <link rel="stylesheet" href="css/animations.css?v=6.9">
-  <link rel="stylesheet" href="css/lab.css?v=6.9">
-  <link rel="stylesheet" href="css/photo-effects.css?v=6.9">
-  <link rel="stylesheet" href="css/cinematic.css?v=6.9">
+  <link rel="stylesheet" href="css/style.css?v=7.0">
+  <link rel="stylesheet" href="css/components.css?v=7.0">
+  <link rel="stylesheet" href="css/animations.css?v=7.0">
+  <link rel="stylesheet" href="css/lab.css?v=7.0">
+  <link rel="stylesheet" href="css/photo-effects.css?v=7.0">
+  <link rel="stylesheet" href="css/cinematic.css?v=7.0">
 
   <!-- Schema.org Comprehensive JSON-LD Graph for Google Search (ProfilePage + Person + WebSite + Breadcrumbs) -->
   <script type="application/ld+json">
@@ -895,6 +895,94 @@
           <p class="section-subtitle">A collection of full-stack, AI, and enterprise database systems built with clean architectures.</p>
         </div>
 
+        <!-- ==================================================================
+             INTERACTIVE SCI-FI PROJECTS VAULT DOOR
+             Click to unlock and reveal the engineered project archives
+             ================================================================== -->
+        <div id="projects-vault-portal" class="vault-portal">
+          <div class="vault-portal-frame">
+            <!-- Left Heavy Blast Door -->
+            <div class="vault-door-wing vault-door-left">
+              <div class="door-inner-panel">
+                <div class="door-tech-label">SECURITY PROTOCOL // ARCHIVE-01</div>
+                <div class="door-grooves">
+                  <span class="groove-line"></span>
+                  <span class="groove-line"></span>
+                  <span class="groove-line"></span>
+                </div>
+                <div class="door-hazard-stripe"></div>
+                <div class="door-status-leds">
+                  <span class="led-dot active"></span>
+                  <span class="led-dot"></span>
+                  <span class="led-dot"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Heavy Blast Door -->
+            <div class="vault-door-wing vault-door-right">
+              <div class="door-inner-panel">
+                <div class="door-tech-label">ENTERPRISE SYSTEMS // CLEARANCE REQ</div>
+                <div class="door-grooves">
+                  <span class="groove-line"></span>
+                  <span class="groove-line"></span>
+                  <span class="groove-line"></span>
+                </div>
+                <div class="door-hazard-stripe"></div>
+                <div class="door-status-leds">
+                  <span class="led-dot"></span>
+                  <span class="led-dot"></span>
+                  <span class="led-dot active"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Center Biometric Lock Mechanism & Trigger Wheel -->
+            <div class="vault-lock-core" id="vault-door-trigger" role="button" tabindex="0" aria-label="Click to unlock projects door">
+              <!-- Holographic Scan Beam -->
+              <div class="vault-scan-laser" aria-hidden="true"></div>
+
+              <!-- Inner Circular Hub -->
+              <div class="biometric-icon-wrap">
+                <svg class="fingerprint-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2a10 10 0 0 0-10 10c0 3.5 1.8 6.5 4.5 8.3"></path>
+                  <path d="M12 6a6 6 0 0 0-6 6c0 2.2 1.2 4.2 3 5.2"></path>
+                  <path d="M12 10a2 2 0 0 0-2 2c0 1.1.9 2 2 2s2-.9 2-2"></path>
+                  <path d="M18 12a6 6 0 0 0-3-5.2"></path>
+                  <path d="M22 12c0-3.5-1.8-6.5-4.5-8.3"></path>
+                  <path d="M15 17.2c1.8-1 3-3 3-5.2"></path>
+                  <path d="M19.5 20.3c2.7-1.8 4.5-4.8 4.5-8.3"></path>
+                </svg>
+              </div>
+              <div class="vault-status-badge">
+                <span class="status-pulse-dot"></span>
+                <span class="status-text">PROJECTS LOCKED</span>
+              </div>
+              <h4 class="vault-action-prompt">CLICK DOOR TO UNLOCK</h4>
+              <p class="vault-action-hint">⚡ 4 Production Systems &bull; Interactive Lab</p>
+            </div>
+
+            <!-- Ambient Volumetric Light Rays (Behind the Door) -->
+            <div class="vault-light-burst" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             PROJECTS VAULT CHAMBER (Revealed upon Door Opening)
+             ================================================================== -->
+        <div id="projects-vault-chamber" class="projects-vault-chamber is-locked">
+          <!-- Unlocked Control Bar -->
+          <div class="vault-unlocked-bar">
+            <div class="vault-unlocked-status">
+              <span class="unlocked-pulse-dot"></span>
+              <span>VAULT CHAMBER UNLOCKED // 4 ENTERPRISE SYSTEMS ONLINE</span>
+            </div>
+            <button type="button" id="btn-reseal-vault" class="btn-reseal-door" title="Close and re-lock the projects door">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Re-seal Door</span>
+            </button>
+          </div>
+
         <!-- Project Filtering Tabs -->
         <div class="skills-filter-nav reveal">
           <button type="button" class="filter-btn active" data-filter="all">All Projects</button>
@@ -1260,6 +1348,8 @@
               </div>
             </div>
           </div>
+        </div>
+        <!-- End #projects-vault-chamber -->
         </div>
 
       </div>
@@ -1986,13 +2076,13 @@
   <script src="js/ScrollTrigger.min.js"></script>
   <!-- 3D WebGL Engine & Portfolio Scripts -->
   <script src="js/three.min.js"></script>
-  <script src="js/three-scene.js?v=6.9"></script>
-  <script src="js/config.js?v=6.9"></script>
-  <script src="js/animations.js?v=6.9"></script>
-  <script src="js/cinematic.js?v=6.9"></script>
-  <script src="js/projects.js?v=6.9"></script>
-  <script src="js/lab.js?v=6.9"></script>
-  <script src="js/contact.js?v=6.9"></script>
-  <script src="js/main.js?v=6.9"></script>
+  <script src="js/three-scene.js?v=7.0"></script>
+  <script src="js/config.js?v=7.0"></script>
+  <script src="js/animations.js?v=7.0"></script>
+  <script src="js/cinematic.js?v=7.0"></script>
+  <script src="js/projects.js?v=7.0"></script>
+  <script src="js/lab.js?v=7.0"></script>
+  <script src="js/contact.js?v=7.0"></script>
+  <script src="js/main.js?v=7.0"></script>
 </body>
 </html>

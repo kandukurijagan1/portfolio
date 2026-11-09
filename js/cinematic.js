@@ -644,6 +644,149 @@
   }
 
   /* ------------------------------------------------------------------
+     15B. INTERACTIVE SCI-FI PROJECTS VAULT DOOR
+     ------------------------------------------------------------------ */
+  function initProjectsVaultDoor() {
+    const portal = document.getElementById("projects-vault-portal");
+    const trigger = document.getElementById("vault-door-trigger");
+    const chamber = document.getElementById("projects-vault-chamber");
+    const resealBtn = document.getElementById("btn-reseal-vault");
+
+    if (!portal || !trigger || !chamber) return;
+
+    // Web Audio API Synthesized Sci-Fi Sound Effects
+    function playVaultSound(type) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        if (ctx.state === "suspended") ctx.resume();
+
+        if (type === "open") {
+          // Hydraulic heavy unlatch sub-bass
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = "sawtooth";
+          osc1.frequency.setValueAtTime(80, ctx.currentTime);
+          osc1.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.8);
+          gain1.gain.setValueAtTime(0.25, ctx.currentTime);
+          gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.85);
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start();
+          osc1.stop(ctx.currentTime + 0.9);
+
+          // Pneumatic air hiss & high-tech scan sweep
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = "sine";
+          osc2.frequency.setValueAtTime(320, ctx.currentTime);
+          osc2.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.4);
+          osc2.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.7);
+          gain2.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.75);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start();
+          osc2.stop(ctx.currentTime + 0.8);
+        } else if (type === "close") {
+          // Re-seal latch clank
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(130, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 0.5);
+          gain.gain.setValueAtTime(0.22, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.55);
+        }
+      } catch (err) {
+        // AudioContext not allowed or unsupported; fail silently
+      }
+    }
+
+    function openVault() {
+      if (portal.classList.contains("is-opening") || portal.classList.contains("is-opened")) return;
+
+      playVaultSound("open");
+
+      // 1. Trigger opening animation state on the door wings & lock
+      portal.classList.add("is-opening");
+      const statusText = portal.querySelector(".status-text");
+      if (statusText) statusText.textContent = "ACCESS GRANTED // OPENING";
+
+      // 2. Animate projects chamber into view
+      setTimeout(() => {
+        portal.classList.add("is-opened");
+        chamber.classList.remove("is-locked");
+        chamber.classList.add("is-unlocked");
+
+        // Stagger in the project cards with high-impact GSAP
+        const projectCards = chamber.querySelectorAll(".project-card");
+        if (projectCards.length && typeof gsap !== "undefined") {
+          gsap.fromTo(projectCards, 
+            { opacity: 0, y: 70, scale: 0.88, rotateX: 6 },
+            { opacity: 1, y: 0, scale: 1, rotateX: 0, duration: 0.9, stagger: 0.14, ease: "power4.out" }
+          );
+        }
+
+        // Stagger in engineering lab container
+        const labContainer = chamber.querySelector(".engineering-lab-container");
+        if (labContainer && typeof gsap !== "undefined") {
+          gsap.fromTo(labContainer,
+            { opacity: 0, y: 50 },
+            { opacity: 1, y: 0, duration: 0.8, delay: 0.5, ease: "power3.out" }
+          );
+        }
+
+        // Refresh ScrollTrigger so all positions align smoothly
+        if (typeof ScrollTrigger !== "undefined") {
+          ScrollTrigger.refresh();
+        }
+      }, 950);
+    }
+
+    function resealVault() {
+      playVaultSound("close");
+
+      // Hide projects chamber
+      chamber.classList.remove("is-unlocked");
+      chamber.classList.add("is-locked");
+
+      // Restore door portal
+      portal.classList.remove("is-opened");
+      portal.classList.remove("is-opening");
+      const statusText = portal.querySelector(".status-text");
+      if (statusText) statusText.textContent = "PROJECTS LOCKED";
+
+      // Scroll smoothly back to projects header so user sees the closed door
+      const projectsSection = document.getElementById("projects");
+      if (projectsSection) {
+        projectsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      if (typeof ScrollTrigger !== "undefined") {
+        ScrollTrigger.refresh();
+      }
+    }
+
+    trigger.addEventListener("click", openVault);
+    trigger.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openVault();
+      }
+    });
+
+    if (resealBtn) {
+      resealBtn.addEventListener("click", resealVault);
+    }
+  }
+
+  /* ------------------------------------------------------------------
      16. INITIALIZE EVERYTHING
      ------------------------------------------------------------------ */
   function initCinematic() {
@@ -659,6 +802,7 @@
     initParallax();
     initSectionTitleScramble();
     initGenericReveals();
+    initProjectsVaultDoor();
 
     // Refresh ScrollTrigger after images/fonts load
     window.addEventListener("load", () => {
