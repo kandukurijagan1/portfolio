@@ -4,8 +4,7 @@
  * ==============================================================================
  * 
  * Target Email : kandukurijagan99@gmail.com
- * Google Sheet : https://docs.google.com/spreadsheets/d/1QS8lblW2MVVpmMuKUjjOzROefO9hT41hXQLbtWGqUY/edit
- * Web App URL  : https://script.google.com/macros/s/AKfycbzx_r-W-GIwKG_Ey6dkRjxK2A8lrkfYXEWJVM4-JacYdMBKhe8WHviBQNUpXy8wHUjO/exec
+ * Google Sheet : Bound directly to your "portfolio" Google Sheet (Extensions > Apps Script)
  * 
  * Workflows handled automatically upon visitor submission:
  * 1. 📊 Saves visitor data into Google Sheet (Timestamp, Name, Email ID, Subject, Message)
@@ -17,17 +16,16 @@
 // 1. Target email address where Kandukuri Jagan receives all portfolio messages
 var RECIPIENT_EMAIL = "kandukurijagan99@gmail.com";
 
-// 2. Google Sheet ID from your spreadsheet URL
-var SPREADSHEET_ID = "1QS8lblW2MVVpmMuKUjjOzROefO9hT41hXQLbtWGqUY";
-
 
 /**
  * ==============================================================================
- * ⚡ CRITICAL: ONE-CLICK AUTHORIZATION & TEST FUNCTION
+ * ⚡ ONE-CLICK TEST & AUTHORIZATION FUNCTION
  * ==============================================================================
- * In the Apps Script toolbar dropdown, select "testAll" and click "Run".
- * Google will ask you to authorize Google Sheets and Gmail permissions once.
- * It will immediately insert a test row into your "portfolio" Google Sheet!
+ * Select "testAll" in the top dropdown menu and click "Run".
+ * It will:
+ * 1. Prompt you to authorize permissions (click Review permissions > Allow).
+ * 2. Immediately write a test row into your "portfolio" Google Sheet.
+ * 3. Send a test email to kandukurijagan99@gmail.com.
  */
 function testAll() {
   var timestamp = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy, hh:mm a") + " IST";
@@ -68,39 +66,28 @@ function testAll() {
  * ==============================================================================
  * HELPER: Save Submission to Google Sheet
  * ==============================================================================
+ * Automatically detects the bound spreadsheet (SpreadsheetApp.getActiveSpreadsheet)
+ * so it never fails with "illegal spreadsheet id" errors!
  */
 function saveToSheet(name, email, subject, message, timestamp) {
-  var lastErr = "";
-  var ss = null;
+  try {
+    var ss = null;
 
-  // Attempt 1: Open by explicit Spreadsheet ID
-  if (SPREADSHEET_ID && SPREADSHEET_ID.trim() !== "") {
-    try {
-      ss = SpreadsheetApp.openById(SPREADSHEET_ID.trim());
-    } catch (e1) {
-      lastErr += "openById error: " + e1.toString() + " | ";
-    }
-  }
-
-  // Attempt 2: If script is bound to the sheet, use getActiveSpreadsheet
-  if (!ss) {
+    // 1. Direct active spreadsheet access (since this script is inside your portfolio sheet)
     try {
       ss = SpreadsheetApp.getActiveSpreadsheet();
-    } catch (e2) {
-      lastErr += "getActiveSpreadsheet error: " + e2.toString() + " | ";
+    } catch (e1) {
+      Logger.log("getActiveSpreadsheet notice: " + e1.toString());
     }
-  }
 
-  if (!ss) {
-    Logger.log("⚠️ Could not open spreadsheet: " + lastErr);
-    return { success: false, error: "Could not open spreadsheet: " + lastErr };
-  }
+    if (!ss) {
+      throw new Error("Could not access active spreadsheet. Please ensure this script is opened via Extensions > Apps Script in your portfolio Google Sheet.");
+    }
 
-  try {
     // Select Sheet1 or the first sheet tab
     var sheet = ss.getSheetByName("Sheet1") || ss.getActiveSheet() || ss.getSheets()[0];
     if (!sheet) {
-      return { success: false, error: "Target sheet tab not found." };
+      throw new Error("Target sheet tab not found.");
     }
 
     // Auto-create professional header row if sheet is currently empty
@@ -131,8 +118,8 @@ function saveToSheet(name, email, subject, message, timestamp) {
     return { success: true };
 
   } catch (err) {
-    Logger.log("⚠️ Sheet appendRow error: " + err.toString());
-    return { success: false, error: "appendRow error: " + err.toString() };
+    Logger.log("⚠️ saveToSheet error: " + err.toString());
+    return { success: false, error: err.toString() };
   }
 }
 
@@ -146,7 +133,7 @@ function doPost(e) {
   try {
     var data = {};
 
-    // 1. Extract form fields
+    // 1. Extract form fields (handles real submissions or manual editor test)
     if (e && e.parameter && (e.parameter.name || e.parameter.email || e.parameter.message)) {
       data = e.parameter;
     } else if (e && e.postData && e.postData.contents) {
@@ -164,6 +151,14 @@ function doPost(e) {
       }
     } else if (e && e.parameter) {
       data = e.parameter;
+    } else {
+      // Fallback sample data if run manually inside Apps Script Editor
+      data = {
+        name: "Test Visitor",
+        email: "kandukurijagan99@gmail.com",
+        subject: "Manual Editor Test",
+        message: "This is a test run executed directly from the Apps Script editor."
+      };
     }
 
     var name = (data.name || "Valued Visitor").toString().trim();
@@ -303,23 +298,15 @@ function doGet(e) {
   var diag = {
     status: "online",
     recipient: RECIPIENT_EMAIL,
-    spreadsheetId: SPREADSHEET_ID,
-    openByIdTest: null,
-    activeSpreadsheetTest: null
+    sheetConnected: false
   };
 
   try {
-    var ss1 = SpreadsheetApp.openById(SPREADSHEET_ID.trim());
-    diag.openByIdTest = ss1 ? ("Connected: " + ss1.getName()) : "Null";
-  } catch (err1) {
-    diag.openByIdTest = "Error: " + err1.toString();
-  }
-
-  try {
-    var ss2 = SpreadsheetApp.getActiveSpreadsheet();
-    diag.activeSpreadsheetTest = ss2 ? ("Connected: " + ss2.getName()) : "Null";
-  } catch (err2) {
-    diag.activeSpreadsheetTest = "Error: " + err2.toString();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    diag.sheetConnected = ss ? true : false;
+    diag.sheetName = ss ? ss.getName() : null;
+  } catch (err) {
+    diag.sheetError = err.toString();
   }
 
   return ContentService.createTextOutput(JSON.stringify(diag, null, 2))
