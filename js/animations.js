@@ -106,6 +106,9 @@ function initTypewriter() {
  * 3. IntersectionObserver for Performant Scroll Reveals
  */
 function initScrollReveal() {
+  // If GSAP and ScrollTrigger are active, cinematic.js handles high-performance cinematic reveals
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') return;
+
   const revealElements = document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale");
 
   if (!("IntersectionObserver" in window)) {
