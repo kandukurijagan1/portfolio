@@ -20,7 +20,7 @@ const PORTFOLIO_CONFIG = {
     phone: "+91 8367047947",
     email: "kandukurijagan99@gmail.com",
     // Google Apps Script Web App Endpoint for real-time email dispatch
-    contactWebhookUrl: "https://script.google.com/macros/s/AKfycbyp5OJcMy-pvZV3n2nA2D-dgNcX91i1h9d_HHxhw1uTBItKFPw1tgdwcCY7LYY_0i6P/exec",
+    contactWebhookUrl: "https://script.google.com/macros/s/AKfycbzx_r-W-GIwKG_Ey6dkRjxK2A8lrkfYXEWJVM4-JacYdMBKhe8WHviBQNUpXy8wHUjO/exec",
     github: "https://github.com/kandukurijagan1?tab=repositories",
     linkedin: "https://www.linkedin.com/in/jagan-kandukuri-053a0331b/",
     resumeUrl: "assets/resume.pdf",
