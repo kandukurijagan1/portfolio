@@ -3533,12 +3533,12 @@ textarea.form-control {
 /* 1. Unauthenticated Security Barrier */
 #contact-auth-barrier,
 .contact-auth-barrier {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  text-align: center !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
   padding: 42px 28px;
   background: rgba(13, 18, 31, 0.75);
   border: 1px solid var(--border-glow, rgba(56, 189, 248, 0.25));
@@ -3546,6 +3546,11 @@ textarea.form-control {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+#contact-auth-barrier.hidden,
+.contact-auth-barrier.hidden {
+  display: none !important;
 }
 
 .auth-barrier-icon {
@@ -3586,29 +3591,29 @@ textarea.form-control {
 
 #btn-direct-google-auth,
 .btn-google-auth {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 12px !important;
-  background: #ffffff !important;
-  color: #1f2937 !important;
-  font-weight: 700 !important;
-  font-size: 0.95rem !important;
-  padding: 12px 28px !important;
-  border-radius: 9999px !important;
-  border: 1px solid #e5e7eb !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25) !important;
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-  min-width: 240px !important;
-  width: auto !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #ffffff;
+  color: #1f2937;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 12px 28px;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 240px;
+  width: auto;
 }
 
 #btn-direct-google-auth:hover,
 .btn-google-auth:hover {
-  background: #f8fafc !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35) !important;
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
 }
 
 .auth-barrier-notice {
@@ -3631,24 +3636,32 @@ textarea.form-control {
   align-items: center;
   justify-content: space-between;
   padding: 12px 18px;
-  background: rgba(20, 28, 46, 0.85);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 14px;
   margin-bottom: 22px;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-wrap: nowrap;
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.contact-auth-status-bar.hidden {
+  display: none !important;
 }
 
 .auth-status-left {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .auth-avatar-box {
   position: relative;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
 }
 
@@ -3687,19 +3700,24 @@ textarea.form-control {
 .auth-user-meta {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .auth-name-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .auth-user-name {
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-primary, #ffffff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .auth-role-pill {
@@ -3707,6 +3725,8 @@ textarea.form-control {
   padding: 2px 8px;
   border-radius: 9999px;
   font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .auth-role-pill.verified-pill {
@@ -3722,15 +3742,20 @@ textarea.form-control {
 }
 
 .auth-user-email {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--text-secondary, #94a3b8);
-  font-family: monospace;
+  font-family: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
 }
 
 .auth-status-right {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .btn-auth-switch {
@@ -3743,6 +3768,7 @@ textarea.form-control {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-auth-switch:hover {
@@ -3751,11 +3777,11 @@ textarea.form-control {
 }
 
 .btn-auth-signout {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: var(--text-secondary, #94a3b8);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #f87171;
   border-radius: 8px;
-  padding: 6px 12px;
+  padding: 6px 14px;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
@@ -3763,12 +3789,13 @@ textarea.form-control {
   align-items: center;
   gap: 6px;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-auth-signout:hover {
+  background: rgba(239, 68, 68, 0.2);
   border-color: #ef4444;
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.08);
+  color: #ffffff;
 }
 
 /* 3. Locked Form Field Indicator */
@@ -3799,11 +3826,16 @@ textarea.form-control {
   padding-bottom: 12px;
 }
 
+.contact-view-tabs.hidden {
+  display: none !important;
+}
+
+.contact-view-tabs .tab-btn,
 .contact-tab-btn {
-  background: transparent;
-  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-secondary, #94a3b8);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   padding: 8px 16px;
   border-radius: 10px;
@@ -3814,14 +3846,17 @@ textarea.form-control {
   transition: all 0.2s ease;
 }
 
+.contact-view-tabs .tab-btn:hover,
 .contact-tab-btn:hover {
   color: var(--text-primary, #ffffff);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
+.contact-view-tabs .tab-btn.active,
 .contact-tab-btn.active {
-  background: rgba(56, 189, 248, 0.12);
-  border-color: rgba(56, 189, 248, 0.3);
+  background: rgba(56, 189, 248, 0.14);
+  border-color: rgba(56, 189, 248, 0.4);
   color: var(--accent-cyan, #38bdf8);
 }
 

@@ -308,27 +308,57 @@
     const adminPortalEl = document.getElementById('contact-admin-portal');
     const historyViewEl = document.getElementById('contact-history-view');
     const successStateEl = document.getElementById('contact-success-state');
+    const tabsContainer = document.getElementById('contact-view-tabs');
 
-    // 1. Unauthenticated State
+    // 1. Unauthenticated State: Show barrier, hide all auth components
     if (!currentUser) {
       if (barrierEl) {
-        barrierEl.style.display = 'flex';
+        barrierEl.classList.remove('hidden');
+        barrierEl.style.setProperty('display', 'flex', 'important');
         barrierEl.style.flexDirection = 'column';
         barrierEl.style.alignItems = 'center';
         barrierEl.style.textAlign = 'center';
         barrierEl.style.width = '100%';
       }
-      if (authStatusEl) authStatusEl.style.display = 'none';
-      if (formEl) formEl.style.display = 'none';
-      if (adminPortalEl) adminPortalEl.style.display = 'none';
-      if (historyViewEl) historyViewEl.style.display = 'none';
-      if (successStateEl) successStateEl.style.display = 'none';
+      if (authStatusEl) {
+        authStatusEl.classList.add('hidden');
+        authStatusEl.style.setProperty('display', 'none', 'important');
+      }
+      if (tabsContainer) {
+        tabsContainer.classList.add('hidden');
+        tabsContainer.style.setProperty('display', 'none', 'important');
+      }
+      if (formEl) {
+        formEl.classList.add('hidden');
+        formEl.style.setProperty('display', 'none', 'important');
+      }
+      if (adminPortalEl) {
+        adminPortalEl.classList.add('hidden');
+        adminPortalEl.style.setProperty('display', 'none', 'important');
+      }
+      if (historyViewEl) {
+        historyViewEl.classList.add('hidden');
+        historyViewEl.style.setProperty('display', 'none', 'important');
+      }
+      if (successStateEl) {
+        successStateEl.classList.add('hidden');
+        successStateEl.style.setProperty('display', 'none', 'important');
+      }
+
+      const btnLabel = document.getElementById('google-auth-btn-label');
+      if (btnLabel) btnLabel.innerHTML = 'Sign in with Google';
       return;
     }
 
-    // 2. Authenticated State: Hide barrier
-    if (barrierEl) barrierEl.style.display = 'none';
-    if (authStatusEl) authStatusEl.style.display = 'flex';
+    // 2. Authenticated State: MUST HIDE BARRIER COMPLETELY
+    if (barrierEl) {
+      barrierEl.classList.add('hidden');
+      barrierEl.style.setProperty('display', 'none', 'important');
+    }
+    if (authStatusEl) {
+      authStatusEl.classList.remove('hidden');
+      authStatusEl.style.setProperty('display', 'flex', 'important');
+    }
 
     // Populate user profile info in status bar
     updateAuthStatusBar();
@@ -432,8 +462,14 @@
     const historyViewEl = document.getElementById('contact-history-view');
     const tabsContainer = document.getElementById('contact-view-tabs');
 
-    if (adminPortalEl) adminPortalEl.style.display = 'none';
-    if (tabsContainer) tabsContainer.style.display = 'flex';
+    if (adminPortalEl) {
+      adminPortalEl.classList.add('hidden');
+      adminPortalEl.style.setProperty('display', 'none', 'important');
+    }
+    if (tabsContainer) {
+      tabsContainer.classList.remove('hidden');
+      tabsContainer.style.setProperty('display', 'flex', 'important');
+    }
 
     // Lock and pre-fill form fields
     const nameInput = document.getElementById('contact-name');
@@ -467,12 +503,24 @@
 
     // Switch between Compose Form and History View based on tab
     if (currentActiveTab === 'history') {
-      if (formEl) formEl.style.display = 'none';
-      if (historyViewEl) historyViewEl.style.display = 'block';
+      if (formEl) {
+        formEl.classList.add('hidden');
+        formEl.style.setProperty('display', 'none', 'important');
+      }
+      if (historyViewEl) {
+        historyViewEl.classList.remove('hidden');
+        historyViewEl.style.setProperty('display', 'block', 'important');
+      }
       loadAndRenderVisitorHistory();
     } else {
-      if (formEl) formEl.style.display = 'flex';
-      if (historyViewEl) historyViewEl.style.display = 'none';
+      if (formEl) {
+        formEl.classList.remove('hidden');
+        formEl.style.setProperty('display', 'flex', 'important');
+      }
+      if (historyViewEl) {
+        historyViewEl.classList.add('hidden');
+        historyViewEl.style.setProperty('display', 'none', 'important');
+      }
       // Load history count in background
       loadVisitorHistoryCount();
     }
@@ -655,10 +703,22 @@
     const historyViewEl = document.getElementById('contact-history-view');
     const tabsContainer = document.getElementById('contact-view-tabs');
 
-    if (formEl) formEl.style.display = 'none';
-    if (historyViewEl) historyViewEl.style.display = 'none';
-    if (tabsContainer) tabsContainer.style.display = 'none';
-    if (adminPortalEl) adminPortalEl.style.display = 'block';
+    if (formEl) {
+      formEl.classList.add('hidden');
+      formEl.style.setProperty('display', 'none', 'important');
+    }
+    if (historyViewEl) {
+      historyViewEl.classList.add('hidden');
+      historyViewEl.style.setProperty('display', 'none', 'important');
+    }
+    if (tabsContainer) {
+      tabsContainer.classList.add('hidden');
+      tabsContainer.style.setProperty('display', 'none', 'important');
+    }
+    if (adminPortalEl) {
+      adminPortalEl.classList.remove('hidden');
+      adminPortalEl.style.setProperty('display', 'block', 'important');
+    }
 
     adminPortalEl.innerHTML = `
       <div class="admin-portal-wrapper">
