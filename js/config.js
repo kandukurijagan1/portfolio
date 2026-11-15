@@ -30,8 +30,8 @@ const PORTFOLIO_CONFIG = {
     },
     // Supabase Real-Time PostgreSQL Database Configuration
     supabase: {
-      url: "https://tfncblvaaemkbtvqnpdn.supabase.co",
-      anonKey: "sb_publishable_D7LL7bdXwN1kEUeV3JEygQ_AdM_366s",
+      url: "https://tfncblvaaemkbtvqnpdn.supabase.co", // Replace with your new Supabase Project URL
+      anonKey: "sb_publishable_2rZ9V0nF98ee6YI9Rpi4HA_ZHcNO-U7",
       tableName: "portfolio_messages"
     },
     github: "https://github.com/kandukurijagan1?tab=repositories",
