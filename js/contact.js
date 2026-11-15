@@ -96,6 +96,13 @@ function initContactForm() {
       clearError(messageInput, "contact-message-error");
     }
 
+    // Require Google Authentication Check
+    if (window.PortfolioAuth && !window.PortfolioAuth.getCurrentUser()) {
+      showToast("🔒 Please sign in with your Google account to send a message.", "info");
+      window.PortfolioAuth.openSignInModal();
+      return;
+    }
+
     if (!isValid) return;
 
     // Capture values before resetting form
@@ -130,6 +137,36 @@ function initContactForm() {
     params.append("email", emailVal);
     params.append("subject", subjectVal);
     params.append("message", messageVal);
+
+    // Attach verified Google authentication metadata
+    const authUser = window.PortfolioAuth && window.PortfolioAuth.getCurrentUser();
+    if (authUser) {
+      params.append("avatar", authUser.picture || "");
+      params.append("googleVerified", "true");
+      params.append("googleSub", authUser.sub || "");
+    }
+
+    // Record to local thread history immediately
+    if (window.recordSubmittedMessage) {
+      window.recordSubmittedMessage({
+        name: nameVal,
+        email: emailVal,
+        subject: subjectVal,
+        message: messageVal
+      });
+    }
+
+    // Save to Supabase PostgreSQL real-time database in parallel (if configured)
+    if (window.PortfolioSupabase && window.PortfolioSupabase.isConfigured()) {
+      window.PortfolioSupabase.saveMessage({
+        name: nameVal,
+        email: emailVal,
+        subject: subjectVal,
+        message: messageVal,
+        avatar: (authUser && authUser.picture) || "",
+        googleVerified: Boolean(authUser)
+      }).catch(sbErr => console.warn("Supabase background save notice:", sbErr));
+    }
 
     if (scriptUrl && (scriptUrl.startsWith("https://script.google.com/") || scriptUrl.startsWith("https://formspree.io/"))) {
       // 🚀 LIGHTNING NON-BLOCKING DISPATCH:
@@ -252,6 +289,9 @@ function showToast(message, type = "success") {
     toast.classList.remove("show");
   }, 4000);
 }
+
+// Expose toast globally for authentication alerts
+window.showToast = showToast;
 
 /**
  * 4. Executive Celebratory Particle Shimmer Burst

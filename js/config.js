@@ -21,6 +21,18 @@ const PORTFOLIO_CONFIG = {
     email: "kandukurijagan99@gmail.com",
     // Google Apps Script Web App Endpoint for real-time email dispatch
     contactWebhookUrl: "https://script.google.com/macros/s/AKfycbzvr7Qd1hzkNH1CqzrYm1Vi44mFqb54VlYmsNspuiZqnmit_zksOeXJyeplg2cTNAUk/exec",
+    // Google Authentication & Admin Control Settings
+    auth: {
+      adminEmail: "kandukurijagan99@gmail.com",
+      googleClientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+      enableDevLogin: true
+    },
+    // Supabase Real-Time PostgreSQL Database Configuration
+    supabase: {
+      url: "YOUR_SUPABASE_PROJECT_URL", // e.g. https://your-id.supabase.co
+      anonKey: "YOUR_SUPABASE_ANON_PUBLIC_KEY", // Project Settings -> API -> Project API keys -> anon/public
+      tableName: "portfolio_messages"
+    },
     github: "https://github.com/kandukurijagan1?tab=repositories",
     linkedin: "https://www.linkedin.com/in/jagan-kandukuri-053a0331b/",
     resumeUrl: "assets/resume.pdf",
@@ -502,6 +514,10 @@ const PORTFOLIO_CONFIG = {
     }
   ]
 };
+
+// Convenience shortcuts for global auth & supabase access
+PORTFOLIO_CONFIG.auth = PORTFOLIO_CONFIG.personal.auth;
+PORTFOLIO_CONFIG.supabase = PORTFOLIO_CONFIG.personal.supabase;
 
 // Export to global scope
 if (typeof window !== "undefined") {

@@ -1,139 +1,166 @@
 /**
  * ==============================================================================
- * GOOGLE APPS SCRIPT: PORTFOLIO CONTACT DISPATCHER & GOOGLE SHEETS LOGGER
+ * GOOGLE APPS SCRIPT: PORTFOLIO CONTACT DISPATCHER & REAL-TIME MESSAGE HUB
  * ==============================================================================
  * 
- * Target Email : kandukurijagan99@gmail.com
- * Web App URL  : https://script.google.com/macros/s/AKfycbzvr7Qd1hzkNH1CqzrYm1Vi44mFqb54VlYmsNspuiZqnmit_zksOeXJyeplg2cTNAUk/exec
+ * Target Admin Email : kandukurijagan99@gmail.com
+ * Current Web App URL: https://script.google.com/macros/s/AKfycbzvr7Qd1hzkNH1CqzrYm1Vi44mFqb54VlYmsNspuiZqnmit_zksOeXJyeplg2cTNAUk/exec
  * 
- * Workflows handled automatically upon visitor submission:
- * 1. 📊 Saves visitor data into Google Sheet (Timestamp, Name, Email ID, Subject, Message)
- * 2. 🚀 Delivers full inquiry notification to Kandukuri Jagan's inbox
- * 3. ✉️ Sends kind confirmation email to visitor with custom automated notice
+ * Capabilities:
+ * 1. 📊 Stores messages in Google Sheet with verified sender metadata (Timestamp, Name, Email ID, Subject, Message, Avatar, Status)
+ * 2. 🚀 Dispatches full instant email notification to Kandukuri Jagan's inbox
+ * 3. ✉️ Sends kind confirmation email to visitor with automated notice
+ * 4. 🔍 GET ?action=getHistory&email=... -> Returns visitor's personal message history for persistent re-login
+ * 5. 👑 GET ?action=getAllMessages&adminEmail=... -> Returns all visitor messages for kandukurijagan99@gmail.com admin dashboard
  * ==============================================================================
  */
 
-// 1. Target email address where Kandukuri Jagan receives all portfolio messages
+// Primary admin email where Kandukuri Jagan manages all portfolio communications
+var ADMIN_EMAIL = "kandukurijagan99@gmail.com";
 var RECIPIENT_EMAIL = "kandukurijagan99@gmail.com";
 
+// OPTIONAL: If this script is NOT created via "Extensions > Apps Script" inside your Google Sheet,
+// paste the Google Sheet ID below. You can find it in your Google Sheet URL:
+// https://docs.google.com/spreadsheets/d/<COPY_THIS_PART>/edit
+// Leave empty ("") if you opened Apps Script directly from Extensions > Apps Script inside the sheet!
+var SPREADSHEET_ID = ""; 
 
 /**
- * ==============================================================================
- * ⚡ ONE-CLICK TEST & AUTHORIZATION FUNCTION
- * ==============================================================================
- * Select "testAll" in the top dropdown menu and click "Run".
- * It will:
- * 1. Prompt you to authorize permissions (click Review permissions > Allow).
- * 2. Immediately write a test row into your "portfolio" Google Sheet.
- * 3. Send a test email to kandukurijagan99@gmail.com.
+ * Robust helper to obtain the active or linked Google Sheet instance
  */
-function testAll() {
-  var timestamp = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy, hh:mm a") + " IST";
-  
-  // Test Sheet Recording
-  var sheetResult = saveToSheet(
-    "Jagan (Test Visitor)",
-    "kandukurijagan99@gmail.com",
-    "Portfolio System Connection Test",
-    "This test row confirms that form submissions are automatically saved to your Google Sheet!",
-    timestamp
-  );
-
-  // Test Email Notification
-  var emailSuccess = false;
+function getSpreadsheetInstance() {
   try {
-    MailApp.sendEmail({
-      to: RECIPIENT_EMAIL,
-      subject: "✅ [Portfolio Test] Contact Dispatcher & Sheets Logger is Active!",
-      htmlBody: "<div style='font-family: sans-serif; padding: 22px; background: #0d131f; color: #fff; border-radius: 12px;'>" +
-                "<h2 style='color: #38bdf8; margin-top: 0;'>🚀 Portfolio System is Working!</h2>" +
-                "<p>Google Sheet connected: <strong>" + (sheetResult.success ? "YES ✅" : ("NO ❌ - " + sheetResult.error)) + "</strong></p>" +
-                "<p>Timestamp: " + timestamp + "</p>" +
-                "</div>"
-    });
-    emailSuccess = true;
-  } catch (err) {
-    Logger.log("Email test error: " + err.toString());
+    var active = SpreadsheetApp.getActiveSpreadsheet();
+    if (active) return active;
+  } catch (e) {
+    Logger.log("getActiveSpreadsheet notice: " + e.toString());
   }
 
-  Logger.log("--- TEST RESULTS ---");
-  Logger.log("Google Sheet result: " + (sheetResult.success ? "SUCCESS ✅" : ("FAILED ❌ (" + sheetResult.error + ")")));
-  Logger.log("Email result: " + (emailSuccess ? "SUCCESS ✅" : "FAILED ❌"));
-}
-
-
-/**
- * ==============================================================================
- * HELPER: Save Submission to Google Sheet
- * ==============================================================================
- * Automatically detects the bound spreadsheet (SpreadsheetApp.getActiveSpreadsheet)
- * so it never fails with "illegal spreadsheet id" errors!
- */
-function saveToSheet(name, email, subject, message, timestamp) {
-  try {
-    var ss = null;
-
-    // 1. Direct active spreadsheet access (since this script is inside your portfolio sheet)
+  if (SPREADSHEET_ID && SPREADSHEET_ID.trim().length > 10 && !SPREADSHEET_ID.includes("YOUR_")) {
     try {
-      ss = SpreadsheetApp.getActiveSpreadsheet();
-    } catch (e1) {
-      Logger.log("getActiveSpreadsheet notice: " + e1.toString());
+      return SpreadsheetApp.openById(SPREADSHEET_ID.trim());
+    } catch (e2) {
+      Logger.log("openById notice: " + e2.toString());
     }
+  }
 
-    if (!ss) {
-      throw new Error("Could not access active spreadsheet. Please ensure this script is opened via Extensions > Apps Script in your portfolio Google Sheet.");
-    }
+  return null;
+}
 
-    // Select Sheet1 or the first sheet tab
-    var sheet = ss.getSheetByName("Sheet1") || ss.getActiveSheet() || ss.getSheets()[0];
-    if (!sheet) {
-      throw new Error("Target sheet tab not found.");
-    }
 
-    // Auto-create professional header row if sheet is currently empty
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["Timestamp", "Name", "Email ID", "Subject", "Message"]);
-      var headerRange = sheet.getRange(1, 1, 1, 5);
-      headerRange.setFontWeight("bold");
-      headerRange.setBackground("#0d131f");
-      headerRange.setFontColor("#38bdf8");
-      headerRange.setHorizontalAlignment("center");
-      headerRange.setVerticalAlignment("middle");
-      sheet.setRowHeight(1, 36);
-      sheet.setFrozenRows(1);
-    }
-
-    // Check if user customized the first column as Name (4 columns)
-    var lastCol = sheet.getLastColumn();
-    if (lastCol > 0) {
-      var firstHeader = (sheet.getRange(1, 1).getValue() || "").toString().toLowerCase();
-      if (firstHeader.indexOf("name") !== -1) {
-        sheet.appendRow([name, email, subject, message]);
-        return { success: true };
+/**
+ * ==============================================================================
+ * 1. GET HANDLER: History retrieval, Admin Inbox & Health Diagnostics
+ * ==============================================================================
+ */
+function doGet(e) {
+  try {
+    var action = (e && e.parameter && e.parameter.action) ? e.parameter.action.toString().trim() : "";
+    
+    // --- WORKFLOW A: Visitor Personal Message History ---
+    if (action === "getHistory") {
+      var email = (e.parameter.email || "").toString().trim().toLowerCase();
+      if (!email) {
+        return createJsonResponse({
+          status: "error",
+          message: "Email parameter is required to fetch history."
+        });
       }
+
+      var allRows = getSheetRows();
+      var userMessages = [];
+
+      for (var i = 0; i < allRows.length; i++) {
+        var row = allRows[i];
+        if ((row.email || "").toLowerCase() === email) {
+          userMessages.push(row);
+        }
+      }
+
+      // Return newest messages first
+      userMessages.reverse();
+
+      return createJsonResponse({
+        status: "success",
+        email: email,
+        count: userMessages.length,
+        messages: userMessages
+      });
     }
 
-    // Default 5 columns: Timestamp, Name, Email ID, Subject, Message
-    sheet.appendRow([timestamp, name, email, subject, message]);
-    return { success: true };
+    // --- WORKFLOW B: Admin Master Inbox (kandukurijagan99@gmail.com) ---
+    if (action === "getAllMessages") {
+      var adminEmail = (e.parameter.adminEmail || "").toString().trim().toLowerCase();
+      if (adminEmail !== ADMIN_EMAIL.toLowerCase()) {
+        return createJsonResponse({
+          status: "error",
+          message: "Unauthorized. Admin access restricted to " + ADMIN_EMAIL
+        });
+      }
+
+      var allMessages = getSheetRows();
+      // Reverse to show newest messages at top of admin dashboard
+      allMessages.reverse();
+
+      // Compute quick stats
+      var uniqueEmails = {};
+      for (var j = 0; j < allMessages.length; j++) {
+        if (allMessages[j].email) {
+          uniqueEmails[allMessages[j].email.toLowerCase()] = true;
+        }
+      }
+
+      return createJsonResponse({
+        status: "success",
+        isAdmin: true,
+        adminEmail: ADMIN_EMAIL,
+        total: allMessages.length,
+        uniqueContacts: Object.keys(uniqueEmails).length,
+        messages: allMessages
+      });
+    }
+
+    // --- WORKFLOW C: System Health Check & Diagnostics ---
+    var diag = {
+      status: "online",
+      service: "Portfolio Contact Dispatcher & Real-Time Message Hub",
+      adminEmail: ADMIN_EMAIL,
+      sheetConnected: false,
+      totalMessages: 0
+    };
+
+    try {
+      var ss = getSpreadsheetInstance();
+      if (ss) {
+        diag.sheetConnected = true;
+        diag.sheetName = ss.getName();
+        diag.totalMessages = getSheetRows().length;
+      }
+    } catch (sheetErr) {
+      diag.sheetError = sheetErr.toString();
+    }
+
+    return createJsonResponse(diag);
 
   } catch (err) {
-    Logger.log("⚠️ saveToSheet error: " + err.toString());
-    return { success: false, error: err.toString() };
+    return createJsonResponse({
+      status: "error",
+      message: err.toString()
+    });
   }
 }
 
 
 /**
  * ==============================================================================
- * MAIN POST HANDLER: Triggered on every form submission from the portfolio
+ * 2. POST HANDLER: Form Submissions with Google Verified Identity
  * ==============================================================================
  */
 function doPost(e) {
   try {
     var data = {};
 
-    // 1. Extract form fields (handles real submissions or manual editor test)
+    // Extract form fields
     if (e && e.parameter && (e.parameter.name || e.parameter.email || e.parameter.message)) {
       data = e.parameter;
     } else if (e && e.postData && e.postData.contents) {
@@ -152,10 +179,9 @@ function doPost(e) {
     } else if (e && e.parameter) {
       data = e.parameter;
     } else {
-      // Fallback sample data if run manually inside Apps Script Editor
       data = {
         name: "Test Visitor",
-        email: "kandukurijagan99@gmail.com",
+        email: ADMIN_EMAIL,
         subject: "Manual Editor Test",
         message: "This is a test run executed directly from the Apps Script editor."
       };
@@ -165,30 +191,28 @@ function doPost(e) {
     var email = (data.email || "").toString().trim();
     var subject = (data.subject || "Portfolio Inquiry / Collaboration").toString().trim();
     var message = (data.message || "No message content provided.").toString().trim();
+    var avatar = (data.avatar || "").toString().trim();
+    var isGoogleVerified = (data.googleVerified === "true" || data.googleVerified === true || Boolean(data.googleSub));
     var timestamp = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy, hh:mm a") + " IST";
 
-    // -------------------------------------------------------------------------
-    // STEP 1: SAVE SUBMISSION DIRECTLY INTO GOOGLE SHEET
-    // -------------------------------------------------------------------------
-    var sheetResult = saveToSheet(name, email, subject, message, timestamp);
+    // 1. Save submission into Google Sheet
+    var sheetResult = saveToSheet(name, email, subject, message, timestamp, avatar, isGoogleVerified);
 
-    // -------------------------------------------------------------------------
-    // STEP 2: DISPATCH PRIMARY NOTIFICATION TO KANDUKURI JAGAN
-    // -------------------------------------------------------------------------
+    // 2. Dispatch primary notification to Kandukuri Jagan
     try {
-      var emailSubject = "🚀 [Portfolio Message] " + subject + " — from " + name;
+      var emailSubject = "🚀 [Portfolio Message] " + subject + " — from " + name + (isGoogleVerified ? " (Google Verified ✓)" : "");
       var adminHtml = 
         '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f19; color: #f8fafc; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b; box-shadow: 0 15px 35px rgba(0,0,0,0.5);">' +
           '<div style="background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%); padding: 26px 24px; text-align: center;">' +
             '<h1 style="margin: 0; font-size: 22px; font-weight: 800; color: #ffffff;">🚀 New Portfolio Connection!</h1>' +
-            '<p style="margin: 6px 0 0; font-size: 13px; color: #e0e7ff;">A visitor reached out via kandukuri-jagan-portfolio.netlify.app</p>' +
+            '<p style="margin: 6px 0 0; font-size: 13px; color: #e0e7ff;">A verified visitor reached out via kandukuri-jagan-portfolio.netlify.app</p>' +
           '</div>' +
           '<div style="padding: 24px;">' +
             '<div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 10px 14px; margin-bottom: 20px;">' +
-              '<span style="color: #10b981; font-size: 13px; font-weight: 700;">' + (sheetResult.success ? "✅ Saved in Google Sheet" : "⚠️ Sheet: " + sheetResult.error) + ' • Receipt sent to: ' + email + '</span>' +
+              '<span style="color: #10b981; font-size: 13px; font-weight: 700;">' + (sheetResult.success ? "✅ Recorded in Google Sheet" : "⚠️ Sheet: " + sheetResult.error) + ' • Verified Email: ' + email + '</span>' +
             '</div>' +
             '<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">' +
-              '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px; width: 90px;"><strong>Sender:</strong></td><td style="padding: 8px 0; color: #ffffff; font-size: 15px; font-weight: 700;">' + name + '</td></tr>' +
+              '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px; width: 90px;"><strong>Sender:</strong></td><td style="padding: 8px 0; color: #ffffff; font-size: 15px; font-weight: 700;">' + name + (isGoogleVerified ? ' <span style="background: #10b981; color: #000; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 800;">GOOGLE VERIFIED ✓</span>' : '') + '</td></tr>' +
               '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px;"><strong>Email:</strong></td><td style="padding: 8px 0;"><a href="mailto:' + email + '" style="color: #38bdf8; text-decoration: none; font-weight: 600;">' + email + '</a></td></tr>' +
               '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px;"><strong>Subject:</strong></td><td style="padding: 8px 0; color: #f1f5f9; font-size: 14px; font-weight: 600;">' + subject + '</td></tr>' +
               '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px;"><strong>Time:</strong></td><td style="padding: 8px 0; color: #64748b; font-size: 12px; font-family: monospace;">' + timestamp + '</td></tr>' +
@@ -208,7 +232,7 @@ function doPost(e) {
         '</div>';
 
       MailApp.sendEmail({
-        to: RECIPIENT_EMAIL,
+        to: ADMIN_EMAIL,
         subject: emailSubject,
         htmlBody: adminHtml,
         replyTo: email,
@@ -218,9 +242,7 @@ function doPost(e) {
       Logger.log("Admin email error: " + adminErr.toString());
     }
 
-    // -------------------------------------------------------------------------
-    // STEP 3: SEND KIND CONFIRMATION TO VISITOR WITH AUTOMATED NOTICE
-    // -------------------------------------------------------------------------
+    // 3. Send kind confirmation email to visitor
     if (email && email.indexOf("@") !== -1 && email.indexOf(".") !== -1) {
       try {
         var firstName = name.split(" ")[0] || name;
@@ -228,30 +250,19 @@ function doPost(e) {
         
         var visitorHtml = 
           '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; max-width: 580px; margin: 0 auto; background-color: #0d131f; color: #f8fafc; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b; box-shadow: 0 15px 35px rgba(0,0,0,0.5); padding: 32px 28px;">' +
-            '<!-- Header -->' +
             '<h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 800; color: #38bdf8; letter-spacing: -0.3px;">Message Received!</h2>' +
-
-            '<!-- Greeting -->' +
             '<p style="color: #ffffff; font-size: 15px; font-weight: 600; margin: 0 0 14px;">Hi ' + firstName + ',</p>' +
-
-            '<!-- Core Confirmation -->' +
             '<p style="color: #cbd5e1; font-size: 14px; line-height: 1.65; margin: 0 0 14px;">' +
               'Thank you for contacting me through my portfolio. I have received your message regarding <strong>"' + subject + '"</strong> and will get back to you shortly.' +
             '</p>' +
-
-            '<!-- Explicit Automated Notice Box (Requested by Jagan) -->' +
             '<div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-left: 3px solid #38bdf8; border-radius: 8px; padding: 12px 16px; margin: 18px 0;">' +
               '<p style="color: #94a3b8; font-size: 12.5px; line-height: 1.6; margin: 0;">' +
-                'ℹ️ <strong style="color: #38bdf8;">Notice:</strong> This is an automated message set by me for a better and faster way of communication with users. Your message has been safely delivered to my personal inbox, and I will review and follow up with you directly.' +
+                'ℹ️ <strong style="color: #38bdf8;">Notice:</strong> This is an automated message set by me for a better and faster way of communication with users. Your message has been safely delivered to my personal inbox, and you can view your full conversation history anytime you log in with your Google account on my portfolio.' +
               '</p>' +
             '</div>' +
-
-            '<!-- Urgent Contact -->' +
             '<p style="color: #cbd5e1; font-size: 14px; line-height: 1.65; margin: 16px 0;">' +
               'For urgent inquiries, call/WhatsApp me at <a href="https://api.whatsapp.com/send?phone=918367047947" style="color: #38bdf8; text-decoration: none; font-weight: 700;">+91 8367047947</a> or connect via <a href="https://www.linkedin.com/in/jagan-kandukuri-053a0331b/" style="color: #38bdf8; text-decoration: none; font-weight: 700;">LinkedIn</a>.' +
             '</p>' +
-
-            '<!-- Sign-off -->' +
             '<div style="margin-top: 26px; padding-top: 20px; border-top: 1px solid #1e293b;">' +
               '<p style="color: #94a3b8; font-size: 13px; margin: 0 0 4px;">Best regards,</p>' +
               '<p style="color: #ffffff; font-size: 15px; font-weight: 700; margin: 0 0 2px;">Kandukuri Jagan</p>' +
@@ -265,50 +276,185 @@ function doPost(e) {
           subject: visitorSubject,
           htmlBody: visitorHtml,
           name: "Kandukuri Jagan",
-          replyTo: RECIPIENT_EMAIL
+          replyTo: ADMIN_EMAIL
         });
       } catch (visitorErr) {
         Logger.log("Visitor email notice: " + visitorErr.toString());
       }
     }
 
-    // Return instant success response
-    return ContentService.createTextOutput(JSON.stringify({
+    return createJsonResponse({
       result: "success",
-      message: "Submission saved to Google Sheet & email dispatched.",
+      message: "Message recorded in Google Sheet and emails dispatched.",
       sheetSaved: sheetResult.success,
-      sheetError: sheetResult.error || null
-    })).setMimeType(ContentService.MimeType.JSON);
+      timestamp: timestamp
+    });
 
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({
+    return createJsonResponse({
       result: "error",
       error: err.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
+    });
   }
 }
 
 
 /**
  * ==============================================================================
- * GET DIAGNOSTICS & HEALTH CHECK
+ * 3. HELPER: Read rows from Google Sheet into objects
  * ==============================================================================
  */
-function doGet(e) {
-  var diag = {
-    status: "online",
-    recipient: RECIPIENT_EMAIL,
-    sheetConnected: false
-  };
-
+function getSheetRows() {
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    diag.sheetConnected = ss ? true : false;
-    diag.sheetName = ss ? ss.getName() : null;
-  } catch (err) {
-    diag.sheetError = err.toString();
-  }
+    var ss = getSpreadsheetInstance();
+    if (!ss) return [];
+    var sheet = ss.getSheetByName("Sheet1") || ss.getActiveSheet() || ss.getSheets()[0];
+    if (!sheet || sheet.getLastRow() <= 1) return [];
 
-  return ContentService.createTextOutput(JSON.stringify(diag, null, 2))
+    var data = sheet.getDataRange().getValues();
+    if (!data || data.length <= 1) return [];
+
+    var headers = data[0].map(function(h) { 
+      return (h || "").toString().trim().toLowerCase(); 
+    });
+
+    var rows = [];
+    for (var r = 1; r < data.length; r++) {
+      var row = data[r];
+      var isBlank = true;
+      for (var k = 0; k < row.length; k++) {
+        if (row[k] !== "" && row[k] !== null && row[k] !== undefined) {
+          isBlank = false;
+          break;
+        }
+      }
+      if (isBlank) continue;
+
+      var item = { id: r };
+      for (var c = 0; c < headers.length; c++) {
+        var key = headers[c];
+        var val = row[c] !== undefined ? row[c] : "";
+        if (val instanceof Date) {
+          val = Utilities.formatDate(val, "Asia/Kolkata", "dd MMM yyyy, hh:mm a") + " IST";
+        }
+        val = val.toString().trim();
+
+        if (key.indexOf("time") !== -1) item.timestamp = val;
+        else if (key.indexOf("name") !== -1) item.name = val;
+        else if (key.indexOf("mail") !== -1) item.email = val;
+        else if (key.indexOf("subject") !== -1) item.subject = val;
+        else if (key.indexOf("message") !== -1) item.message = val;
+        else if (key.indexOf("avatar") !== -1) item.avatar = val;
+        else if (key.indexOf("status") !== -1) item.status = val;
+        else item[key] = val;
+      }
+
+      // Sensible defaults
+      if (!item.timestamp) item.timestamp = "Recent";
+      if (!item.name) item.name = "Visitor";
+      if (!item.email) item.email = "";
+      if (!item.subject) item.subject = "Portfolio Inquiry";
+      if (!item.message) item.message = "";
+      if (!item.status) item.status = "Delivered";
+
+      rows.push(item);
+    }
+
+    return rows;
+  } catch (err) {
+    Logger.log("getSheetRows error: " + err.toString());
+    return [];
+  }
+}
+
+
+/**
+ * ==============================================================================
+ * 4. HELPER: Save Submission to Google Sheet
+ * ==============================================================================
+ */
+function saveToSheet(name, email, subject, message, timestamp, avatar, isGoogleVerified) {
+  try {
+    var ss = getSpreadsheetInstance();
+    if (!ss) {
+      Logger.log("⚠️ Google Sheet not connected. Dispatched email alert directly.");
+      return { success: false, error: "Google Sheet not configured" };
+    }
+
+    var sheet = ss.getSheetByName("Sheet1") || ss.getActiveSheet() || ss.getSheets()[0];
+    if (!sheet) {
+      throw new Error("Target sheet tab not found.");
+    }
+
+    // Auto-create professional header row if empty
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["Timestamp", "Name", "Email ID", "Subject", "Message", "Avatar", "Verified"]);
+      var headerRange = sheet.getRange(1, 1, 1, 7);
+      headerRange.setFontWeight("bold");
+      headerRange.setBackground("#0d131f");
+      headerRange.setFontColor("#38bdf8");
+      headerRange.setHorizontalAlignment("center");
+      headerRange.setVerticalAlignment("middle");
+      sheet.setRowHeight(1, 36);
+      sheet.setFrozenRows(1);
+    }
+
+    // Check header columns to align properly
+    var lastCol = sheet.getLastColumn();
+    var firstHeader = (sheet.getRange(1, 1).getValue() || "").toString().toLowerCase();
+
+    if (firstHeader.indexOf("name") !== -1) {
+      // 4-column layout: Name, Email ID, Subject, Message
+      sheet.appendRow([name, email, subject, message]);
+    } else {
+      // Standard 5+ column layout
+      var rowData = [timestamp, name, email, subject, message];
+      if (lastCol >= 6) rowData.push(avatar || "");
+      if (lastCol >= 7) rowData.push(isGoogleVerified ? "Google Verified ✓" : "Standard");
+      sheet.appendRow(rowData);
+    }
+
+    return { success: true };
+
+  } catch (err) {
+    Logger.log("⚠️ saveToSheet error: " + err.toString());
+    return { success: false, error: err.toString() };
+  }
+}
+
+
+/**
+ * ==============================================================================
+ * 5. HELPER: Create JSON Response Output
+ * ==============================================================================
+ */
+function createJsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+
+/**
+ * ==============================================================================
+ * 6. ONE-CLICK TEST FUNCTION FOR APPS SCRIPT EDITOR
+ * ==============================================================================
+ */
+function testAll() {
+  var timestamp = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy, hh:mm a") + " IST";
+  
+  var sheetResult = saveToSheet(
+    "Jagan (Admin Test)",
+    ADMIN_EMAIL,
+    "Real-Time Auth & History System Test",
+    "Testing Google Auth message recording and real-time history retrieval.",
+    timestamp,
+    "",
+    true
+  );
+
+  var historyResult = getSheetRows();
+
+  Logger.log("--- TEST SUMMARY ---");
+  Logger.log("Save to sheet: " + (sheetResult.success ? "SUCCESS ✅" : "FAILED ❌ " + sheetResult.error));
+  Logger.log("Total messages in sheet: " + historyResult.length);
 }

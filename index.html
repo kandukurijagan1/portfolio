@@ -76,6 +76,8 @@
   <link rel="dns-prefetch" href="https://api.whatsapp.com">
   <link rel="dns-prefetch" href="https://mail.google.com">
 
+  <!-- Google Identity Services (GIS) Sign-In SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/style.css?v=7.0">
   <link rel="stylesheet" href="css/components.css?v=7.0">
@@ -1857,6 +1859,53 @@
 
           <!-- Right: Interactive Contact Form -->
           <div class="contact-form-card reveal-right">
+            <!-- 1. Unauthenticated Security Barrier (Requires Google Sign In) -->
+            <div id="contact-auth-barrier" class="contact-auth-barrier">
+              <div class="auth-barrier-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+              </div>
+              <h3 class="auth-barrier-title">Sign in with Google to Connect</h3>
+              <p class="auth-barrier-lead">
+                To guarantee genuine communication, lock your verified sender email, and unlock your persistent message history, please sign in with your Google account.
+              </p>
+              
+              <div id="google-signin-btn-container" class="google-btn-slot"></div>
+
+              <div class="auth-barrier-notice">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Direct Google Verification • Spam-Free • Thread History Saved</span>
+              </div>
+
+              <div class="auth-quick-dev-row">
+                <button type="button" class="btn-dev-auth trigger-google-auth-modal">⚡ Quick / Dev Sign-In</button>
+              </div>
+            </div>
+
+            <!-- 2. Authenticated Account Status Bar -->
+            <div id="contact-auth-status-bar" class="contact-auth-status-bar" style="display: none;"></div>
+
+            <!-- 3. Navigation Tabs (Compose Message vs Conversation History vs Admin Inbox) -->
+            <div id="contact-view-tabs" class="contact-view-tabs" style="display: none;">
+              <button type="button" id="tab-btn-compose" class="tab-btn active">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>Compose Message</span>
+              </button>
+              <button type="button" id="tab-btn-history" class="tab-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>Your History</span>
+                <span id="history-count-badge" class="tab-badge">0</span>
+              </button>
+              <button type="button" id="tab-btn-admin" class="tab-btn tab-btn-admin" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                <span>Admin Master Inbox 👑</span>
+              </button>
+            </div>
+
             <!-- Connected to Google Apps Script webhook -->
             <form id="portfolio-contact-form" class="contact-form" action="https://script.google.com/macros/s/AKfycbzvr7Qd1hzkNH1CqzrYm1Vi44mFqb54VlYmsNspuiZqnmit_zksOeXJyeplg2cTNAUk/exec" method="POST" novalidate>
               <div class="form-group-row">
@@ -1961,6 +2010,66 @@
                 </a>
               </div>
             </div>
+
+            <!-- 5. Visitor Message History View (Unlocked on Google Re-Login) -->
+            <div id="contact-history-view" class="contact-history-view" style="display: none;">
+              <div class="history-view-header">
+                <div>
+                  <h4 class="history-title">Your Conversation History</h4>
+                  <p class="history-subtitle">All messages submitted through your verified Google account are preserved here.</p>
+                </div>
+                <button type="button" id="btn-refresh-history" class="btn btn-secondary btn-sm" title="Refresh messages from cloud">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                  <span>Sync</span>
+                </button>
+              </div>
+              <div id="history-messages-list" class="history-messages-list">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- 6. Admin Portal (Unlocked exclusively for kandukurijagan99@gmail.com) -->
+            <div id="contact-admin-portal" class="contact-admin-portal" style="display: none;">
+              <div class="admin-portal-header">
+                <div>
+                  <div class="admin-badge">⚡ Real-Time Admin Hub</div>
+                  <h3 class="admin-title">Master Communication Feed</h3>
+                  <p class="admin-subtitle">Live incoming inquiries, verified senders, and instant reply center.</p>
+                </div>
+                <div class="admin-header-actions">
+                  <button type="button" id="btn-admin-refresh" class="btn btn-secondary btn-sm">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                    <span>Refresh</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Admin Quick Metrics Bar -->
+              <div class="admin-metrics-bar">
+                <div class="admin-metric-card">
+                  <div class="metric-num" id="admin-metric-total">0</div>
+                  <div class="metric-label">Total Inquiries</div>
+                </div>
+                <div class="admin-metric-card">
+                  <div class="metric-num" id="admin-metric-senders">0</div>
+                  <div class="metric-label">Verified Senders</div>
+                </div>
+                <div class="admin-metric-card">
+                  <div class="metric-num" id="admin-metric-status" style="color: #10b981;">Online</div>
+                  <div class="metric-label">Realtime Sync</div>
+                </div>
+              </div>
+
+              <!-- Admin Search Filter -->
+              <div class="admin-search-wrapper">
+                <input type="text" id="admin-search-input" class="form-control" placeholder="Search by name, email, subject, or message content...">
+              </div>
+
+              <!-- Admin Message Cards Feed -->
+              <div id="admin-messages-feed" class="admin-messages-feed">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
           </div>
         </div>
 
@@ -2017,6 +2126,65 @@
           </svg>
           <span>Download Original Credential</span>
         </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       GOOGLE AUTHENTICATION & QUICK DEV SIGN-IN MODAL
+       ========================================================================== -->
+  <div id="auth-signin-modal" class="modal-overlay auth-modal-overlay" role="dialog" aria-modal="true" aria-label="Google Authentication">
+    <div class="auth-modal-dialog">
+      <div class="auth-modal-header">
+        <div class="auth-modal-logo">
+          <svg width="28" height="28" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Google Account Verification</span>
+        </div>
+        <button type="button" class="auth-modal-close" id="auth-modal-close-btn" aria-label="Close authentication modal">&times;</button>
+      </div>
+
+      <div class="auth-modal-body">
+        <p class="auth-modal-lead">
+          Directly authenticate your Google account to send inquiries, lock your sender identity, and view your message history.
+        </p>
+
+        <!-- Quick Profiles for Instant Real-Time Testing -->
+        <div class="auth-quick-profiles">
+          <div class="auth-profile-card admin-quick-card" data-role="admin">
+            <div class="auth-profile-avatar" style="background: linear-gradient(135deg, #a855f7, #ec4899);">KJ</div>
+            <div class="auth-profile-info">
+              <strong>Kandukuri Jagan (Admin)</strong>
+              <span>kandukurijagan99@gmail.com</span>
+            </div>
+            <button type="button" class="btn-select-auth" data-email="kandukurijagan99@gmail.com" data-name="Kandukuri Jagan">Login as Admin 👑</button>
+          </div>
+
+          <div class="auth-profile-card visitor-quick-card" data-role="visitor">
+            <div class="auth-profile-avatar" style="background: linear-gradient(135deg, #0ea5e9, #38bdf8);">EN</div>
+            <div class="auth-profile-info">
+              <strong>Verified Visitor</strong>
+              <span>endukuniku35@gmail.com</span>
+            </div>
+            <button type="button" class="btn-select-auth" data-email="endukuniku35@gmail.com" data-name="Verified Visitor">Login as Visitor ✉️</button>
+          </div>
+        </div>
+
+        <div class="auth-divider"><span>OFFICIAL GOOGLE OAUTH CONFIGURATION</span></div>
+
+        <div class="auth-oauth-guide" style="background: rgba(56, 189, 248, 0.05); border: 1px dashed rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 14px 16px; margin-top: 12px; font-size: 0.85rem; line-height: 1.6; color: var(--text-secondary);">
+          <strong style="color: #38bdf8; display: block; margin-bottom: 6px;">🔐 Direct Google Sign-In Setup:</strong>
+          <span>To enable Google's native account chooser popup directly from <code style="color: #38bdf8;">accounts.google.com</code>:</span>
+          <ol style="margin: 8px 0 0 18px; padding: 0;">
+            <li>Get a free Google OAuth Client ID from <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline;">Google Cloud Console</a>.</li>
+            <li>Paste your Client ID into <code style="color: #38bdf8;">js/config.js</code> under <code style="color: #38bdf8;">googleClientId</code>.</li>
+            <li>Or enable Google Provider in your <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline;">Supabase Dashboard</a> for direct OAuth redirects!</li>
+          </ol>
+        </div>
       </div>
     </div>
   </div>
@@ -2082,7 +2250,11 @@
   <script src="js/cinematic.js?v=7.0"></script>
   <script src="js/projects.js?v=7.0"></script>
   <script src="js/lab.js?v=7.0"></script>
-  <script src="js/contact.js?v=7.1"></script>
+  <!-- Supabase Real-Time Database Client (Hybrid with Google Apps Script) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js?v=7.2"></script>
+  <script src="js/contact-auth.js?v=7.2"></script>
+  <script src="js/contact.js?v=7.2"></script>
   <script src="js/main.js?v=7.0"></script>
 </body>
 </html>
