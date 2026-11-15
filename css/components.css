@@ -3531,11 +3531,14 @@ textarea.form-control {
    ============================================================================== */
 
 /* 1. Unauthenticated Security Barrier */
+#contact-auth-barrier,
 .contact-auth-barrier {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
   padding: 42px 28px;
   background: rgba(13, 18, 31, 0.75);
   border: 1px solid var(--border-glow, rgba(56, 189, 248, 0.25));
@@ -3578,28 +3581,34 @@ textarea.form-control {
   margin: 12px 0 20px;
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
+#btn-direct-google-auth,
 .btn-google-auth {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  background: #ffffff;
-  color: #1f2937;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 12px 28px;
-  border-radius: 9999px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-  transition: all 0.25s ease;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  padding: 12px 28px !important;
+  border-radius: 9999px !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25) !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  min-width: 240px !important;
+  width: auto !important;
 }
 
+#btn-direct-google-auth:hover,
 .btn-google-auth:hover {
-  background: #f8fafc;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  background: #f8fafc !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35) !important;
 }
 
 .auth-barrier-notice {

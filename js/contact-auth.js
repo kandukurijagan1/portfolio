@@ -311,7 +311,13 @@
 
     // 1. Unauthenticated State
     if (!currentUser) {
-      if (barrierEl) barrierEl.style.display = 'flex';
+      if (barrierEl) {
+        barrierEl.style.display = 'flex';
+        barrierEl.style.flexDirection = 'column';
+        barrierEl.style.alignItems = 'center';
+        barrierEl.style.textAlign = 'center';
+        barrierEl.style.width = '100%';
+      }
       if (authStatusEl) authStatusEl.style.display = 'none';
       if (formEl) formEl.style.display = 'none';
       if (adminPortalEl) adminPortalEl.style.display = 'none';
