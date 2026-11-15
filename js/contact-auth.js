@@ -47,6 +47,35 @@
    */
   function loadCachedSession() {
     try {
+      // Optional URL parameter for instantaneous testing / inspection
+      if (typeof window !== 'undefined' && window.location && window.location.search) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const demoAuth = urlParams.get('demoAuth');
+        if (demoAuth === 'visitor') {
+          currentUser = {
+            name: 'niku enduku',
+            email: 'endukuniku35@gmail.com',
+            picture: '',
+            sub: '12345678',
+            isGoogle: true,
+            isAdmin: false,
+            authTime: Date.now()
+          };
+          return;
+        } else if (demoAuth === 'admin') {
+          currentUser = {
+            name: 'Kandukuri Jagan',
+            email: 'kandukurijagan99@gmail.com',
+            picture: 'assets/images/profile.jpg',
+            sub: 'admin-001',
+            isAdmin: true,
+            isGoogle: true,
+            authTime: Date.now()
+          };
+          return;
+        }
+      }
+
       const cached = localStorage.getItem(STORAGE_KEY_USER);
       if (cached) {
         currentUser = JSON.parse(cached);
