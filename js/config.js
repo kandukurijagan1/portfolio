@@ -30,7 +30,7 @@ const PORTFOLIO_CONFIG = {
     },
     // Supabase Real-Time PostgreSQL Database Configuration
     supabase: {
-      url: "https://tfncblvaaemkbtvqnpdn.supabase.co", // Replace with your new Supabase Project URL
+      url: "https://nudtptnmjvrndnpsutua.supabase.co",
       anonKey: "sb_publishable_2rZ9V0nF98ee6YI9Rpi4HA_ZHcNO-U7",
       tableName: "portfolio_messages"
     },
