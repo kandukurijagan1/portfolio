@@ -35,10 +35,11 @@
    */
   function initAuthSystem() {
     loadCachedSession();
+    checkUrlHashForToken();
     renderAuthUI();
     initGoogleSignInSDK();
-    initSignInModalEvents();
     bindGlobalAuthEvents();
+    bindOAuthMessageListener();
   }
 
   /**
@@ -71,35 +72,158 @@
   }
 
   /**
-   * 3. GOOGLE IDENTITY SERVICES (GIS) SDK SETUP
+   * 3. DIRECT GOOGLE OAUTH 2.0 POPUP FLOW
+   * Triggers official Google Accounts chooser popup (accounts.google.com)
+   * Direct parity with Aaryan Aqua Netlify cloud authentication
+   */
+  window.launchDirectGoogleOAuth = function () {
+    const config = (window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.auth || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.auth))) || {};
+    const clientId = config.googleClientId || '902168382803-6gof845v72ku6k4lp4mecsgr3l1uc3s0.apps.googleusercontent.com';
+    const redirectUri = config.redirectUri || 'https://aaryanaqua.netlify.app/';
+
+    const btnLabel = document.getElementById('google-auth-btn-label');
+    const origText = btnLabel ? btnLabel.innerHTML : 'Sign in with Google';
+    if (btnLabel) {
+      btnLabel.innerHTML = 'Connecting to Google...';
+    }
+
+    const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' + new URLSearchParams({
+      client_id: clientId,
+      response_type: 'token',
+      scope: 'email profile openid',
+      redirect_uri: redirectUri,
+      prompt: 'select_account'
+    }).toString();
+
+    // Center popup on current display
+    const width = 520;
+    const height = 630;
+    const left = window.screenLeft !== undefined ? window.screenLeft + (window.outerWidth - width) / 2 : (screen.width - width) / 2;
+    const top = window.screenTop !== undefined ? window.screenTop + (window.outerHeight - height) / 2 : (screen.height - height) / 2;
+
+    let authWin = null;
+    try {
+      authWin = window.open(authUrl, 'GoogleAuthPopup', `width=${width},height=${height},top=${top},left=${left},menubar=no,toolbar=no,status=no`);
+    } catch (e) {
+      console.warn('Popup blocked by browser:', e);
+    }
+
+    // Fallback: If popup was blocked by browser, perform in-window redirect
+    if (!authWin || authWin.closed || typeof authWin.closed === 'undefined') {
+      window.location.href = authUrl;
+      return;
+    }
+
+    if (authWin.focus) {
+      try { authWin.focus(); } catch (_) {}
+    }
+
+    const pollTimer = setInterval(() => {
+      if (!authWin || authWin.closed) {
+        clearInterval(pollTimer);
+        if (btnLabel && !currentUser) {
+          btnLabel.innerHTML = origText;
+        }
+      }
+    }, 1000);
+  };
+
+  /**
+   * 4. RECEIVE ACCESS TOKEN AND FETCH VERIFIED GOOGLE USER PROFILE
+   * Intercepts postMessage from OAuth popup or direct callback
+   */
+  window.handleGoogleOAuthAccessToken = async function (token) {
+    if (!token) return;
+    const btnLabel = document.getElementById('google-auth-btn-label');
+    if (btnLabel) btnLabel.innerHTML = 'Verifying Account...';
+
+    try {
+      const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Google userinfo HTTP ' + res.status);
+      const userInfo = await res.json();
+      const authedEmail = (userInfo?.email || '').toLowerCase().trim();
+      const authedName = userInfo?.name || authedEmail.split('@')[0];
+      const authedPic = userInfo?.picture || '';
+
+      const user = {
+        name: authedName,
+        email: authedEmail,
+        picture: authedPic,
+        sub: userInfo?.sub || '',
+        isGoogle: true,
+        authTime: Date.now()
+      };
+
+      saveSession(user);
+      renderAuthUI();
+
+      if (window.showToast) {
+        window.showToast(`Signed in with Google as ${authedName} (${authedEmail})`, 'success');
+      }
+    } catch (err) {
+      console.error('Google userinfo error:', err);
+      if (window.showToast) {
+        window.showToast('Could not retrieve Google profile: ' + err.message, 'error');
+      }
+    } finally {
+      if (btnLabel && !currentUser) {
+        btnLabel.innerHTML = 'Sign in with Google';
+      }
+    }
+  };
+
+  /**
+   * 5. LISTEN FOR POSTMESSAGE FROM AUTH POPUP
+   */
+  function bindOAuthMessageListener() {
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'GOOGLE_OAUTH_TOKEN' && event.data.accessToken) {
+        window.handleGoogleOAuthAccessToken(event.data.accessToken);
+      }
+    });
+  }
+
+  /**
+   * 6. CHECK URL HASH FOR TOKEN (In case of direct in-window redirect)
+   */
+  function checkUrlHashForToken() {
+    try {
+      if (window.location.hash && window.location.hash.includes('access_token=')) {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const token = params.get('access_token');
+        if (token) {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+          window.handleGoogleOAuthAccessToken(token);
+        }
+      }
+    } catch (e) {
+      console.warn('URL hash token check notice:', e);
+    }
+  }
+
+  /**
+   * 7. GOOGLE IDENTITY SERVICES (GIS) SDK SETUP
    */
   function initGoogleSignInSDK() {
     const config = window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.auth || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.auth));
     const clientId = config && config.googleClientId;
+    if (!clientId) return;
 
-    // Check if Google GIS is already loaded
     if (window.google && window.google.accounts && window.google.accounts.id) {
-      setupGoogleButton(clientId);
+      setupGoogleGIS(clientId);
     } else {
-      // Wait for script to load
       window.addEventListener('load', () => {
         if (window.google && window.google.accounts && window.google.accounts.id) {
-          setupGoogleButton(clientId);
+          setupGoogleGIS(clientId);
         }
       });
     }
   }
 
-  function setupGoogleButton(clientId) {
-    const btnContainer = document.getElementById('google-signin-btn-container');
-    if (!btnContainer) return;
-
-    // If client ID is the placeholder, Google GIS won't render button without valid client ID
-    if (!clientId || clientId.includes('YOUR_GOOGLE_CLIENT_ID')) {
-      renderDevLoginHelper(btnContainer);
-      return;
-    }
-
+  function setupGoogleGIS(clientId) {
     try {
       window.google.accounts.id.initialize({
         client_id: clientId,
@@ -107,61 +231,8 @@
         auto_select: false,
         cancel_on_tap_outside: true
       });
-
-      window.google.accounts.id.renderButton(btnContainer, {
-        theme: 'filled_black',
-        size: 'large',
-        shape: 'pill',
-        text: 'continue_with',
-        width: 280,
-        logo_alignment: 'left'
-      });
     } catch (err) {
-      console.warn('Google Sign-In button render notice:', err);
-      renderDevLoginHelper(btnContainer);
-    }
-  }
-
-  /**
-   * Fallback & instant simulator for localhost & quick testing
-   */
-  function renderDevLoginHelper(container) {
-    container.innerHTML = `
-      <div class="google-gis-fallback">
-        <button type="button" id="btn-google-real-or-modal" class="btn-google-auth">
-          <svg width="20" height="20" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span>Sign in with Google</span>
-        </button>
-      </div>
-    `;
-
-    const btn = container.querySelector('#btn-google-real-or-modal');
-    if (btn) {
-      btn.addEventListener('click', () => {
-        // 1. Direct Supabase Google OAuth (if configured)
-        if (window.PortfolioSupabase && window.PortfolioSupabase.isConfigured()) {
-          window.PortfolioSupabase.signInWithGoogle();
-          return;
-        }
-
-        // 2. Direct Google One-Tap / GIS Prompt (if Google client ID is configured)
-        const config = window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.auth || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.auth));
-        const clientId = config && config.googleClientId;
-        if (clientId && !clientId.includes('YOUR_GOOGLE_CLIENT_ID') && window.google && window.google.accounts && window.google.accounts.id) {
-          try {
-            window.google.accounts.id.prompt();
-            return;
-          } catch(e) {}
-        }
-
-        // 3. Open OAuth instructions / preset test credentials modal
-        openSignInModal();
-      });
+      console.warn('Google GIS init notice:', err);
     }
   }
 
@@ -188,7 +259,7 @@
   }
 
   /**
-   * 4. PARSE GOOGLE JWT CREDENTIAL
+   * Handle Google Credential Response from GIS
    */
   function handleGoogleCredentialResponse(response) {
     if (!response || !response.credential) return;
@@ -225,82 +296,6 @@
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
     return JSON.parse(jsonPayload);
-  }
-
-  /**
-   * 5. MANUAL / DEV SIGN-IN MODAL (For instant testing of Visitor & Admin)
-   */
-  function initSignInModalEvents() {
-    const modal = document.getElementById('auth-signin-modal');
-    if (!modal) return;
-
-    // Close button
-    const closeBtn = modal.querySelector('.auth-modal-close') || modal.querySelector('#auth-modal-close-btn');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closeSignInModal);
-    }
-
-    // Backdrop click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeSignInModal();
-    });
-
-    // Preset Quick Auth Buttons (Admin & Visitor)
-    modal.querySelectorAll('.btn-select-auth').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const email = btn.getAttribute('data-email');
-        const name = btn.getAttribute('data-name');
-        if (email && name) {
-          completeAuth(name, email);
-          closeSignInModal();
-        }
-      });
-    });
-
-    // Custom Google Email Form Submit
-    const customForm = modal.querySelector('#custom-auth-form');
-    if (customForm) {
-      customForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const nameInput = modal.querySelector('#modal-custom-name');
-        const emailInput = modal.querySelector('#modal-custom-email');
-        const name = nameInput ? nameInput.value.trim() : '';
-        const email = emailInput ? emailInput.value.trim() : '';
-        if (name && email) {
-          completeAuth(name, email);
-          closeSignInModal();
-        }
-      });
-    }
-  }
-
-  function openSignInModal() {
-    const modal = document.getElementById('auth-signin-modal');
-    if (modal) {
-      modal.classList.add('active');
-    }
-  }
-
-  function closeSignInModal() {
-    const modal = document.getElementById('auth-signin-modal');
-    if (modal) {
-      modal.classList.remove('active');
-    }
-  }
-
-  function completeAuth(name, email) {
-    const user = {
-      name: name,
-      email: email,
-      picture: '',
-      isGoogle: true,
-      authTime: Date.now()
-    };
-    saveSession(user);
-    renderAuthUI();
-    if (window.showToast) {
-      window.showToast(`Logged in as ${name} (${email})`, 'success');
-    }
   }
 
   /**
@@ -958,9 +953,15 @@
       });
     }
 
-    // Modal triggers
-    const triggerButtons = document.querySelectorAll('.trigger-google-auth-modal');
-    triggerButtons.forEach(b => b.addEventListener('click', openSignInModal));
+    // Direct Google OAuth triggers
+    const triggerButtons = document.querySelectorAll('.trigger-google-auth-modal, #btn-direct-google-auth');
+    triggerButtons.forEach(b => {
+      b.addEventListener('click', () => {
+        if (typeof window.launchDirectGoogleOAuth === 'function') {
+          window.launchDirectGoogleOAuth();
+        }
+      });
+    });
   }
 
   function escapeHtml(str) {
@@ -977,7 +978,11 @@
   window.PortfolioAuth = {
     getCurrentUser: () => currentUser,
     isAdmin: () => Boolean(currentUser && currentUser.isAdmin),
-    openSignInModal: openSignInModal,
+    launchDirectGoogleOAuth: () => {
+      if (typeof window.launchDirectGoogleOAuth === 'function') {
+        window.launchDirectGoogleOAuth();
+      }
+    },
     handleSupabaseUser: handleSupabaseUser,
     signOut: handleSignOut
   };

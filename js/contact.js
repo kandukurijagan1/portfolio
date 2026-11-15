@@ -99,7 +99,9 @@ function initContactForm() {
     // Require Google Authentication Check
     if (window.PortfolioAuth && !window.PortfolioAuth.getCurrentUser()) {
       showToast("🔒 Please sign in with your Google account to send a message.", "info");
-      window.PortfolioAuth.openSignInModal();
+      if (typeof window.launchDirectGoogleOAuth === 'function') {
+        window.launchDirectGoogleOAuth();
+      }
       return;
     }
 

@@ -24,13 +24,14 @@ const PORTFOLIO_CONFIG = {
     // Google Authentication & Admin Control Settings
     auth: {
       adminEmail: "kandukurijagan99@gmail.com",
-      googleClientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-      enableDevLogin: true
+      googleClientId: "902168382803-6gof845v72ku6k4lp4mecsgr3l1uc3s0.apps.googleusercontent.com",
+      redirectUri: "https://aaryanaqua.netlify.app/",
+      enableDevLogin: false
     },
     // Supabase Real-Time PostgreSQL Database Configuration
     supabase: {
-      url: "YOUR_SUPABASE_PROJECT_URL", // e.g. https://your-id.supabase.co
-      anonKey: "YOUR_SUPABASE_ANON_PUBLIC_KEY", // Project Settings -> API -> Project API keys -> anon/public
+      url: "https://tfncblvaaemkbtvqnpdn.supabase.co",
+      anonKey: "sb_publishable_D7LL7bdXwN1kEUeV3JEygQ_AdM_366s",
       tableName: "portfolio_messages"
     },
     github: "https://github.com/kandukurijagan1?tab=repositories",
