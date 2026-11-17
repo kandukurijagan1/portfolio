@@ -119,6 +119,8 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-height) + 20px);
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
@@ -129,9 +131,11 @@ body {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  max-width: 100vw;
   transition: background-color var(--transition-normal), color var(--transition-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Background Ambient Glow Orbs */
@@ -279,6 +283,19 @@ ul, ol {
   padding-right: 24px;
   position: relative;
   z-index: 1;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }
 
 .section {

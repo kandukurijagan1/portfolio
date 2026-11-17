@@ -2391,6 +2391,8 @@ textarea.form-control {
     flex-shrink: 0;
   }
 }
+
+.contact-whatsapp-link:hover {
   color: #25D366;
 }
 
