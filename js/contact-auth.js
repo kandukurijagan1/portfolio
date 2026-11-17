@@ -14,6 +14,30 @@
 (function () {
   'use strict';
 
+  // Instant interception if current window is an OAuth popup callback
+  (function handlePopupOAuthRedirect() {
+    try {
+      if (typeof window !== 'undefined' && window.location && window.location.hash) {
+        if (window.location.hash.includes('access_token=')) {
+          const hashStr = window.location.hash.substring(1);
+          const urlParams = new URLSearchParams(hashStr);
+          const token = urlParams.get('access_token');
+          if (token && window.opener && window.opener !== window) {
+            try {
+              window.opener.postMessage({ type: 'GOOGLE_OAUTH_TOKEN', accessToken: token }, '*');
+              if (typeof window.opener.handleGoogleOAuthAccessToken === 'function') {
+                window.opener.handleGoogleOAuthAccessToken(token);
+              }
+            } catch (_) {}
+            setTimeout(() => {
+              try { window.close(); } catch (_) {}
+            }, 250);
+          }
+        }
+      }
+    } catch (_) {}
+  })();
+
   // State
   let currentUser = null;
   let userHistory = [];
@@ -105,10 +129,13 @@
    * Triggers official Google Accounts chooser popup (accounts.google.com)
    * Direct parity with Aaryan Aqua Netlify cloud authentication
    */
-  window.launchDirectGoogleOAuth = function () {
+  window.launchDirectGoogleOAuth = function (overrideRedirect) {
     const config = (window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.auth || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.auth))) || {};
     const clientId = config.googleClientId || '902168382803-6gof845v72ku6k4lp4mecsgr3l1uc3s0.apps.googleusercontent.com';
-    const redirectUri = config.redirectUri || 'https://aaryanaqua.netlify.app/';
+    let redirectUri = overrideRedirect || config.redirectUri || 'https://kandukuri-jagan-portfolio.netlify.app/';
+    if (!overrideRedirect && typeof window !== 'undefined' && window.location && window.location.origin.includes('localhost')) {
+      redirectUri = window.location.origin + '/';
+    }
 
     const btnLabel = document.getElementById('google-auth-btn-label');
     const origText = btnLabel ? btnLabel.innerHTML : 'Sign in with Google';
@@ -148,13 +175,27 @@
     }
 
     const pollTimer = setInterval(() => {
+      try {
+        if (authWin && authWin.location && authWin.location.hash) {
+          const hash = authWin.location.hash.substring(1);
+          const params = new URLSearchParams(hash);
+          const token = params.get('access_token');
+          if (token) {
+            clearInterval(pollTimer);
+            authWin.close();
+            window.handleGoogleOAuthAccessToken(token);
+            return;
+          }
+        }
+      } catch (_) {}
+
       if (!authWin || authWin.closed) {
         clearInterval(pollTimer);
         if (btnLabel && !currentUser) {
           btnLabel.innerHTML = origText;
         }
       }
-    }, 1000);
+    }, 500);
   };
 
   /**
@@ -224,6 +265,16 @@
         const params = new URLSearchParams(hash);
         const token = params.get('access_token');
         if (token) {
+          if (window.opener && window.opener !== window) {
+            try {
+              window.opener.postMessage({ type: 'GOOGLE_OAUTH_TOKEN', accessToken: token }, '*');
+              if (typeof window.opener.handleGoogleOAuthAccessToken === 'function') {
+                window.opener.handleGoogleOAuthAccessToken(token);
+              }
+            } catch (_) {}
+            setTimeout(() => { try { window.close(); } catch (_) {} }, 250);
+            return;
+          }
           history.replaceState(null, '', window.location.pathname + window.location.search);
           window.handleGoogleOAuthAccessToken(token);
         }
@@ -610,8 +661,8 @@
     let items = getLocalVisitorHistory();
     renderHistoryCards(container, items, false);
 
-    // 1. Prioritize Supabase Real-Time Database if configured
-    if (window.PortfolioSupabase && window.PortfolioSupabase.isConfigured()) {
+    // 1. Prioritize Supabase Real-Time Database
+    if (window.PortfolioSupabase) {
       try {
         const sbResult = await window.PortfolioSupabase.getMessageHistory(currentUser.email);
         if (sbResult && sbResult.success && Array.isArray(sbResult.messages)) {
@@ -624,6 +675,44 @@
       } catch (sbErr) {
         console.warn('Supabase visitor history fetch notice:', sbErr);
       }
+    }
+
+    // Direct HTTPS REST Fallback for visitor history
+    try {
+      const cfg = (window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.supabase || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.supabase))) || {};
+      const sbUrl = cfg.url || 'https://nudtptnmjvrndnpsutua.supabase.co';
+      const sbKey = cfg.anonKey || 'sb_publishable_2rZ9V0nF98ee6YI9Rpi4HA_ZHcNO-U7';
+      const sbTable = cfg.tableName || 'portfolio_messages';
+
+      const restRes = await fetch(`${sbUrl}/rest/v1/${sbTable}?email=ilike.${encodeURIComponent(currentUser.email.trim())}&order=created_at.desc`, {
+        headers: {
+          'apikey': sbKey,
+          'Authorization': `Bearer ${sbKey}`
+        }
+      });
+      if (restRes.ok) {
+        const rows = await restRes.json();
+        if (Array.isArray(rows)) {
+          const formatted = rows.map(r => ({
+            id: r.id,
+            name: r.name,
+            email: r.email,
+            subject: r.subject,
+            message: r.message,
+            timestamp: r.created_at ? new Date(r.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) + ' IST' : 'Recent',
+            status: r.status || 'delivered',
+            avatar: r.avatar_url,
+            is_google_verified: r.is_google_verified
+          }));
+          const merged = mergeMessages(formatted, items);
+          saveLocalVisitorHistory(merged);
+          renderHistoryCards(container, merged, true);
+          loadVisitorHistoryCount();
+          return;
+        }
+      }
+    } catch (restErr) {
+      console.warn('Direct REST visitor history notice:', restErr);
     }
 
     // 2. Fallback to Google Apps Script Web App
@@ -715,7 +804,7 @@
     container.innerHTML = `
       <div class="history-list-header">
         <span class="history-list-count">Showing <strong>${items.length}</strong> past inquiry${items.length > 1 ? 'ies' : ''} from this account</span>
-        <span class="history-sync-indicator">${isCloudSynced ? '⚡ Live synced with Google Sheets' : '📦 Cached locally'}</span>
+        <span class="history-sync-indicator">${isCloudSynced ? '⚡ Live synced with Supabase PostgreSQL' : '📦 Cached locally'}</span>
       </div>
       <div class="history-cards-scroll">
         ${cardsHtml}
@@ -755,7 +844,7 @@
         <div class="admin-header-bar">
           <div class="admin-header-title">
             <h3>📬 Master Inbox & Contact Hub</h3>
-            <span class="admin-live-badge">REAL-TIME GOOGLE SHEETS SYNC</span>
+            <span class="admin-live-badge">REAL-TIME SUPABASE POSTGRESQL ⚡</span>
           </div>
           <button type="button" id="btn-refresh-admin-inbox" class="btn-refresh-inbox">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -778,8 +867,8 @@
             <strong id="admin-metric-senders" class="metric-val">-</strong>
           </div>
           <div class="admin-metric-card">
-            <span class="metric-label">CONNECTED SPREADSHEET</span>
-            <strong class="metric-val" style="font-size: 1rem; color: #10b981;">portfolio (Sheet1) ✓</strong>
+            <span class="metric-label">CONNECTED DATABASE</span>
+            <strong class="metric-val" style="font-size: 0.95rem; color: #10b981;">Supabase PostgreSQL (portfolio_messages) ⚡ Live</strong>
           </div>
         </div>
 
@@ -798,7 +887,7 @@
         <div id="admin-messages-feed" class="admin-messages-feed">
           <div class="admin-loading-state">
             <div class="spinner"></div>
-            <span>Fetching real-time messages from Google Sheet...</span>
+            <span>Connecting to Supabase PostgreSQL real-time database...</span>
           </div>
         </div>
       </div>
@@ -828,12 +917,12 @@
     feed.innerHTML = `
       <div class="admin-loading-state">
         <div class="spinner"></div>
-        <span>Syncing with portfolio real-time hub...</span>
+        <span>Syncing real-time messages from Supabase PostgreSQL...</span>
       </div>
     `;
 
-    // 1. Prioritize Supabase Real-Time Database if configured
-    if (window.PortfolioSupabase && window.PortfolioSupabase.isConfigured()) {
+    // 1. Try Supabase Client
+    if (window.PortfolioSupabase) {
       try {
         const sbResult = await window.PortfolioSupabase.getAllMessages();
         if (sbResult && sbResult.success && Array.isArray(sbResult.messages)) {
@@ -843,17 +932,19 @@
           renderAdminCards(adminMessages);
 
           // Listen for live incoming messages via websocket
-          window.PortfolioSupabase.subscribeToRealtimeMessages(newMsg => {
-            if (!adminMessages.some(m => m.id === newMsg.id || (m.timestamp === newMsg.timestamp && m.message === newMsg.message))) {
-              adminMessages.unshift(newMsg);
-              if (totalMetric) totalMetric.textContent = adminMessages.length;
-              if (sendersMetric) sendersMetric.textContent = countUnique(adminMessages);
-              renderAdminCards(adminMessages);
-              if (window.showToast) {
-                window.showToast(`🔔 New message from ${newMsg.name}`, 'info');
+          try {
+            window.PortfolioSupabase.subscribeToRealtimeMessages(newMsg => {
+              if (!adminMessages.some(m => m.id === newMsg.id || (m.timestamp === newMsg.timestamp && m.message === newMsg.message))) {
+                adminMessages.unshift(newMsg);
+                if (totalMetric) totalMetric.textContent = adminMessages.length;
+                if (sendersMetric) sendersMetric.textContent = countUnique(adminMessages);
+                renderAdminCards(adminMessages);
+                if (window.showToast) {
+                  window.showToast(`🔔 New message from ${newMsg.name}`, 'info');
+                }
               }
-            }
-          });
+            });
+          } catch (_) {}
           return;
         }
       } catch (sbErr) {
@@ -861,38 +952,74 @@
       }
     }
 
-    // 2. Fallback to Google Apps Script Web App
-    const webhookUrl = (window.PORTFOLIO_CONFIG && window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.contactWebhookUrl) || '';
-    if (!webhookUrl || !webhookUrl.startsWith('https://script.google.com/')) {
-      feed.innerHTML = `<div class="admin-empty-state">Webhook URL or Supabase credentials not configured in PORTFOLIO_CONFIG.</div>`;
-      return;
-    }
-
+    // 2. Direct HTTPS REST Query to Supabase (Guaranteed fallback)
     try {
-      const url = `${webhookUrl}?action=getAllMessages&adminEmail=${encodeURIComponent(ADMIN_EMAIL)}`;
-      const res = await fetch(url);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.status === 'success' && Array.isArray(data.messages)) {
-          adminMessages = data.messages;
-          if (totalMetric) totalMetric.textContent = data.total || adminMessages.length;
-          if (sendersMetric) sendersMetric.textContent = data.uniqueContacts || countUnique(adminMessages);
+      const cfg = (window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.supabase || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.supabase))) || {};
+      const sbUrl = cfg.url || 'https://nudtptnmjvrndnpsutua.supabase.co';
+      const sbKey = cfg.anonKey || 'sb_publishable_2rZ9V0nF98ee6YI9Rpi4HA_ZHcNO-U7';
+      const sbTable = cfg.tableName || 'portfolio_messages';
+
+      const restRes = await fetch(`${sbUrl}/rest/v1/${sbTable}?select=*&order=created_at.desc`, {
+        headers: {
+          'apikey': sbKey,
+          'Authorization': `Bearer ${sbKey}`
+        }
+      });
+
+      if (restRes.ok) {
+        const rows = await restRes.json();
+        if (Array.isArray(rows)) {
+          adminMessages = rows.map(r => ({
+            id: r.id,
+            name: r.name,
+            email: r.email,
+            subject: r.subject,
+            message: r.message,
+            timestamp: r.created_at ? new Date(r.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) + ' IST' : 'Recent',
+            status: r.status || 'delivered',
+            avatar: r.avatar_url,
+            is_google_verified: r.is_google_verified
+          }));
+
+          if (totalMetric) totalMetric.textContent = adminMessages.length;
+          if (sendersMetric) sendersMetric.textContent = countUnique(adminMessages);
           renderAdminCards(adminMessages);
           return;
         }
       }
-      throw new Error('Could not retrieve messages');
-    } catch (err) {
-      console.warn('Admin fetch notice:', err);
-      feed.innerHTML = `
-        <div class="admin-empty-state">
-          <p>⚠️ Unable to fetch live messages from Google Sheets. Ensure your Web App is deployed with "Anyone" access, or configure Supabase keys in js/config.js.</p>
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-admin-retry">Retry Connection</button>
-        </div>
-      `;
-      const retryBtn = feed.querySelector('#btn-admin-retry');
-      if (retryBtn) retryBtn.addEventListener('click', loadAdminMessages);
+    } catch (directErr) {
+      console.warn('Direct Supabase REST query notice:', directErr);
     }
+
+    // 3. Fallback to Google Apps Script Web App
+    const webhookUrl = (window.PORTFOLIO_CONFIG && window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.contactWebhookUrl) || '';
+    if (webhookUrl && webhookUrl.startsWith('https://script.google.com/')) {
+      try {
+        const url = `${webhookUrl}?action=getAllMessages&adminEmail=${encodeURIComponent(ADMIN_EMAIL)}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === 'success' && Array.isArray(data.messages)) {
+            adminMessages = data.messages;
+            if (totalMetric) totalMetric.textContent = data.total || adminMessages.length;
+            if (sendersMetric) sendersMetric.textContent = data.uniqueContacts || countUnique(adminMessages);
+            renderAdminCards(adminMessages);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Admin fetch notice:', err);
+      }
+    }
+
+    feed.innerHTML = `
+      <div class="admin-empty-state">
+        <p>⚠️ Unable to fetch live messages from Supabase. Please check your internet connection and retry.</p>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-admin-retry">Retry Connection</button>
+      </div>
+    `;
+    const retryBtn = feed.querySelector('#btn-admin-retry');
+    if (retryBtn) retryBtn.addEventListener('click', loadAdminMessages);
   }
 
   function countUnique(list) {

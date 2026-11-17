@@ -5,8 +5,8 @@
  * Author: Kandukuri Jagan
  * Description:
  * 1. Supabase PostgreSQL handles persistent storage, fast queries, and real-time feeds.
- * 2. Google Apps Script handles automated email delivery & Google Sheets mirror backup.
- * 3. Gracefully falls back to Apps Script + LocalStorage when credentials are being set up.
+ * 2. Includes dual-layer querying: Supabase JS SDK + Direct HTTPS REST API fallback.
+ * 3. Gracefully falls back to Apps Script + LocalStorage when needed.
  * ==============================================================================
  */
 
@@ -17,190 +17,234 @@
   let isSupabaseActive = false;
   let activeChannel = null;
 
-  document.addEventListener('DOMContentLoaded', initSupabase);
+  // Initialize immediately
+  initSupabase();
+  if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', initSupabase);
+    window.addEventListener('load', initSupabase);
+  }
+
+  function getSupabaseCredentials() {
+    const config = (window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.supabase || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.supabase))) || {};
+    const url = (config.url || 'https://nudtptnmjvrndnpsutua.supabase.co').trim();
+    const key = (config.anonKey || 'sb_publishable_2rZ9V0nF98ee6YI9Rpi4HA_ZHcNO-U7').trim();
+    const tableName = config.tableName || 'portfolio_messages';
+    return { url, key, tableName };
+  }
 
   function initSupabase() {
-    const config = window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.supabase || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.supabase));
-    if (!config) return;
+    if (supabaseClient && isSupabaseActive) return supabaseClient;
 
-    const url = config.url && config.url.trim();
-    const key = config.anonKey && config.anonKey.trim();
+    const { url, key } = getSupabaseCredentials();
 
-    // Check if Supabase JS SDK is loaded and credentials are set
-    if (window.supabase && url && key && !url.includes('YOUR_SUPABASE_PROJECT_URL')) {
+    if (window.supabase && typeof window.supabase.createClient === 'function' && url && key && !url.includes('YOUR_SUPABASE_PROJECT_URL')) {
       try {
         supabaseClient = window.supabase.createClient(url, key);
         isSupabaseActive = true;
-        console.log('⚡ Supabase Real-Time Client connected successfully.');
+        console.log('⚡ Supabase Real-Time Client connected to', url);
 
-        // Listen for OAuth sign-in completion (when returning from Google login)
         supabaseClient.auth.onAuthStateChange((event, session) => {
           if (session && session.user && window.PortfolioAuth && window.PortfolioAuth.handleSupabaseUser) {
             window.PortfolioAuth.handleSupabaseUser(session.user);
           }
         });
+        return supabaseClient;
       } catch (err) {
-        console.warn('Supabase initialization notice:', err);
-        isSupabaseActive = false;
+        console.warn('Supabase SDK init notice:', err);
       }
     }
+
+    // Direct REST API is ready even if SDK script is still loading
+    if (url && key && !url.includes('YOUR_SUPABASE_PROJECT_URL')) {
+      isSupabaseActive = true;
+    }
+
+    return supabaseClient;
+  }
+
+  function isConfigured() {
+    initSupabase();
+    const { url, key } = getSupabaseCredentials();
+    return Boolean(url && key && !url.includes('YOUR_SUPABASE_PROJECT_URL'));
   }
 
   /**
-   * Launch direct Google OAuth redirect via Supabase
-   */
-  async function signInWithGoogle() {
-    if (!isSupabaseActive || !supabaseClient) {
-      if (window.showToast) {
-        window.showToast("To use direct Google sign-in, add your Google Client ID or Supabase credentials in js/config.js", "info");
-      }
-      return { success: false, message: 'Supabase client not initialized' };
-    }
-
-    try {
-      const redirectUrl = window.location.origin + window.location.pathname;
-      const { data, error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUrl
-        }
-      });
-      if (error) throw error;
-      return { success: true, data };
-    } catch (err) {
-      console.warn('Supabase Google OAuth notice:', err);
-      if (window.showToast) {
-        window.showToast('Google OAuth error: ' + (err.message || err.toString()), 'error');
-      }
-      return { success: false, error: err.message || err.toString() };
-    }
-  }
-
-  /**
-   * Save message to Supabase
+   * Save message to Supabase (SDK with Direct HTTPS REST Fallback)
    */
   async function saveMessage(data) {
-    if (!isSupabaseActive || !supabaseClient) {
-      return { success: false, fallback: true, message: 'Supabase client not initialized' };
-    }
+    initSupabase();
+    const { url, key, tableName } = getSupabaseCredentials();
 
-    try {
-      const payload = {
-        name: data.name || 'Anonymous Visitor',
-        email: (data.email || '').toLowerCase().trim(),
-        subject: data.subject || 'Portfolio Inquiry',
-        message: data.message || '',
-        avatar_url: data.avatar || '',
-        is_google_verified: Boolean(data.googleVerified),
-        status: 'delivered'
-      };
+    const payload = {
+      name: data.name || 'Anonymous Visitor',
+      email: (data.email || '').toLowerCase().trim(),
+      subject: data.subject || 'Portfolio Inquiry',
+      message: data.message || '',
+      avatar_url: data.avatar || '',
+      is_google_verified: Boolean(data.googleVerified),
+      status: 'delivered'
+    };
 
-      const tableName = (window.PORTFOLIO_CONFIG && window.PORTFOLIO_CONFIG.supabase && window.PORTFOLIO_CONFIG.supabase.tableName) || 'portfolio_messages';
-      const { data: inserted, error } = await supabaseClient
-        .from(tableName)
-        .insert([payload])
-        .select();
+    // 1. Try Supabase SDK
+    if (supabaseClient) {
+      try {
+        const { data: inserted, error } = await supabaseClient
+          .from(tableName)
+          .insert([payload])
+          .select();
 
-      if (error) {
-        console.warn('Supabase insert error:', error);
-        return { success: false, error: error.message };
+        if (!error && inserted && inserted.length > 0) {
+          return { success: true, record: inserted[0] };
+        }
+      } catch (e) {
+        console.warn('Supabase SDK insert notice:', e);
       }
-
-      return { success: true, record: inserted && inserted[0] };
-    } catch (err) {
-      console.warn('Supabase save exception:', err);
-      return { success: false, error: err.toString() };
     }
+
+    // 2. Direct HTTPS REST API Fallback
+    try {
+      const restEndpoint = `${url}/rest/v1/${tableName}`;
+      const res = await fetch(restEndpoint, {
+        method: 'POST',
+        headers: {
+          'apikey': key,
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const inserted = await res.json();
+        return { success: true, record: inserted && inserted[0] };
+      }
+    } catch (err) {
+      console.warn('Direct REST insert error:', err);
+    }
+
+    return { success: false, fallback: true, message: 'Could not write to Supabase' };
   }
 
   /**
-   * Fetch visitor message history by email
+   * Fetch visitor message history by email (SDK with Direct HTTPS REST Fallback)
    */
   async function getMessageHistory(email) {
-    if (!isSupabaseActive || !supabaseClient || !email) {
-      return { success: false, fallback: true, messages: [] };
-    }
+    if (!email) return { success: false, messages: [] };
+    initSupabase();
+    const { url, key, tableName } = getSupabaseCredentials();
 
-    try {
-      const tableName = (window.PORTFOLIO_CONFIG && window.PORTFOLIO_CONFIG.supabase && window.PORTFOLIO_CONFIG.supabase.tableName) || 'portfolio_messages';
-      const { data, error } = await supabaseClient
-        .from(tableName)
-        .select('*')
-        .ilike('email', email.trim())
-        .order('created_at', { ascending: false });
+    // 1. Try Supabase SDK
+    if (supabaseClient) {
+      try {
+        const { data, error } = await supabaseClient
+          .from(tableName)
+          .select('*')
+          .ilike('email', email.trim())
+          .order('created_at', { ascending: false });
 
-      if (error) {
-        console.warn('Supabase query error:', error);
-        return { success: false, error: error.message, messages: [] };
+        if (!error && Array.isArray(data)) {
+          return { success: true, messages: data.map(formatMessageRow) };
+        }
+      } catch (e) {
+        console.warn('Supabase SDK history notice:', e);
       }
-
-      // Format for UI consumption
-      const formatted = (data || []).map(row => ({
-        id: row.id,
-        name: row.name,
-        email: row.email,
-        subject: row.subject,
-        message: row.message,
-        timestamp: formatTimestamp(row.created_at),
-        status: row.status || 'delivered',
-        is_google_verified: row.is_google_verified
-      }));
-
-      return { success: true, messages: formatted };
-    } catch (err) {
-      return { success: false, error: err.toString(), messages: [] };
     }
+
+    // 2. Direct HTTPS REST API Fallback
+    try {
+      const restEndpoint = `${url}/rest/v1/${tableName}?email=ilike.${encodeURIComponent(email.trim())}&order=created_at.desc`;
+      const res = await fetch(restEndpoint, {
+        headers: {
+          'apikey': key,
+          'Authorization': `Bearer ${key}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          return { success: true, messages: data.map(formatMessageRow) };
+        }
+      }
+    } catch (err) {
+      console.warn('Direct REST history error:', err);
+    }
+
+    return { success: false, fallback: true, messages: [] };
   }
 
   /**
    * Fetch all messages for Admin (kandukurijagan99@gmail.com)
+   * SDK with Direct HTTPS REST Fallback
    */
   async function getAllMessages() {
-    if (!isSupabaseActive || !supabaseClient) {
-      return { success: false, fallback: true, messages: [] };
-    }
+    initSupabase();
+    const { url, key, tableName } = getSupabaseCredentials();
 
-    try {
-      const tableName = (window.PORTFOLIO_CONFIG && window.PORTFOLIO_CONFIG.supabase && window.PORTFOLIO_CONFIG.supabase.tableName) || 'portfolio_messages';
-      const { data, error } = await supabaseClient
-        .from(tableName)
-        .select('*')
-        .order('created_at', { ascending: false });
+    // 1. Try Supabase SDK
+    if (supabaseClient) {
+      try {
+        const { data, error } = await supabaseClient
+          .from(tableName)
+          .select('*')
+          .order('created_at', { ascending: false });
 
-      if (error) {
-        return { success: false, error: error.message, messages: [] };
+        if (!error && Array.isArray(data)) {
+          return { success: true, messages: data.map(formatMessageRow) };
+        }
+      } catch (e) {
+        console.warn('Supabase SDK admin query notice:', e);
       }
-
-      const formatted = (data || []).map(row => ({
-        id: row.id,
-        name: row.name,
-        email: row.email,
-        subject: row.subject,
-        message: row.message,
-        timestamp: formatTimestamp(row.created_at),
-        status: row.status || 'delivered',
-        avatar: row.avatar_url,
-        is_google_verified: row.is_google_verified
-      }));
-
-      return { success: true, messages: formatted };
-    } catch (err) {
-      return { success: false, error: err.toString(), messages: [] };
     }
+
+    // 2. Direct HTTPS REST API Fallback
+    try {
+      const restEndpoint = `${url}/rest/v1/${tableName}?select=*&order=created_at.desc`;
+      const res = await fetch(restEndpoint, {
+        headers: {
+          'apikey': key,
+          'Authorization': `Bearer ${key}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          return { success: true, messages: data.map(formatMessageRow) };
+        }
+      }
+    } catch (err) {
+      console.warn('Direct REST admin query error:', err);
+    }
+
+    return { success: false, fallback: true, messages: [] };
+  }
+
+  function formatMessageRow(row) {
+    return {
+      id: row.id,
+      name: row.name,
+      email: row.email,
+      subject: row.subject,
+      message: row.message,
+      timestamp: formatTimestamp(row.created_at),
+      status: row.status || 'delivered',
+      avatar: row.avatar_url,
+      is_google_verified: row.is_google_verified
+    };
   }
 
   /**
-   * Listen to real-time incoming messages (for Admin Inbox Live Feed)
+   * Listen to real-time incoming messages
    */
   function subscribeToRealtimeMessages(callback) {
-    if (!isSupabaseActive || !supabaseClient) return null;
+    initSupabase();
+    if (!supabaseClient) return null;
 
     try {
       if (activeChannel) {
         supabaseClient.removeChannel(activeChannel);
       }
 
-      const tableName = (window.PORTFOLIO_CONFIG && window.PORTFOLIO_CONFIG.supabase && window.PORTFOLIO_CONFIG.supabase.tableName) || 'portfolio_messages';
+      const { tableName } = getSupabaseCredentials();
       activeChannel = supabaseClient
         .channel('realtime_portfolio_messages')
         .on(
@@ -208,18 +252,7 @@
           { event: 'INSERT', schema: 'public', table: tableName },
           payload => {
             if (payload && payload.new && typeof callback === 'function') {
-              const formatted = {
-                id: payload.new.id,
-                name: payload.new.name,
-                email: payload.new.email,
-                subject: payload.new.subject,
-                message: payload.new.message,
-                timestamp: formatTimestamp(payload.new.created_at),
-                status: payload.new.status || 'delivered',
-                avatar: payload.new.avatar_url,
-                is_google_verified: payload.new.is_google_verified
-              };
-              callback(formatted);
+              callback(formatMessageRow(payload.new));
             }
           }
         )
@@ -252,12 +285,10 @@
 
   // Export globally
   window.PortfolioSupabase = {
-    isConfigured: () => isSupabaseActive,
-    signInWithGoogle: signInWithGoogle,
+    isConfigured: isConfigured,
     saveMessage: saveMessage,
     getMessageHistory: getMessageHistory,
     getAllMessages: getAllMessages,
     subscribeToRealtimeMessages: subscribeToRealtimeMessages
   };
-
 })();
