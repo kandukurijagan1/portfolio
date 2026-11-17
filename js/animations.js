@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initCounterRoll();
   initTextScramble();
   initCursorAura();
+  initCustomCursor();
   initClickSparkBurst();
   initHeroPhotoEffects();
 });
@@ -381,6 +382,201 @@ function initCursorAura() {
   }
 
   requestAnimationFrame(renderAura);
+}
+
+/**
+ * 10b. Interactive Cinematic Custom Cursor System
+ * - High-precision core dot tracking pointer instantly
+ * - Fluid spring follower outer ring with lerp interpolation
+ * - Interactive magnetic hover states on buttons, links, cards, & inputs
+ * - Micro-stardust particle trail on cursor motion
+ * - Full Dark & Light theme reactivity
+ * - Complete touch/mobile suppression
+ */
+function initCustomCursor() {
+  // Disable on touchscreen and coarse pointer devices
+  if (window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window) return;
+
+  // 1. Create Core Dot
+  const dot = document.createElement("div");
+  dot.className = "custom-cursor-dot";
+  dot.setAttribute("aria-hidden", "true");
+  document.body.appendChild(dot);
+
+  // 2. Create Outer Ring
+  const ring = document.createElement("div");
+  ring.className = "custom-cursor-ring";
+  ring.setAttribute("aria-hidden", "true");
+  document.body.appendChild(ring);
+
+  // 3. Create Canvas for Fluid Stardust Particle Trail
+  const canvas = document.createElement("canvas");
+  canvas.id = "cursor-trail-canvas";
+  canvas.style.position = "fixed";
+  canvas.style.top = "0";
+  canvas.style.left = "0";
+  canvas.style.width = "100%";
+  canvas.style.height = "100%";
+  canvas.style.pointerEvents = "none";
+  canvas.style.zIndex = "999997";
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext("2d");
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
+
+  window.addEventListener("resize", () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  // Coordinates & Interpolation
+  let mouseX = -200;
+  let mouseY = -200;
+  let dotX = -200;
+  let dotY = -200;
+  let ringX = -200;
+  let ringY = -200;
+  let isVisible = false;
+
+  // Trail particles pool
+  const trailParticles = [];
+  const darkPalette = ["#38bdf8", "#818cf8", "#c084fc", "#06b6d4", "#a855f7"];
+  const lightPalette = ["#2563eb", "#3b82f6", "#1d4ed8", "#0284c7", "#7c3aed"];
+  let prevMouseX = -200;
+  let prevMouseY = -200;
+
+  // Track mouse coordinates
+  window.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    if (!isVisible) {
+      isVisible = true;
+      dot.classList.add("custom-cursor-visible");
+      ring.classList.add("custom-cursor-visible");
+      dotX = ringX = mouseX;
+      dotY = ringY = mouseY;
+    }
+
+    // Spawn subtle stardust trail particles if cursor is moving fast enough
+    const dist = Math.hypot(mouseX - prevMouseX, mouseY - prevMouseY);
+    if (dist > 4 && trailParticles.length < 35) {
+      const isLight = document.documentElement.getAttribute("data-theme") === "light";
+      const palette = isLight ? lightPalette : darkPalette;
+      trailParticles.push({
+        x: mouseX + (Math.random() - 0.5) * 4,
+        y: mouseY + (Math.random() - 0.5) * 4,
+        size: Math.random() * 2.2 + 1.2,
+        color: palette[Math.floor(Math.random() * palette.length)],
+        alpha: 0.7,
+        decay: Math.random() * 0.035 + 0.025,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6 + 0.15
+      });
+      prevMouseX = mouseX;
+      prevMouseY = mouseY;
+    }
+  }, { passive: true });
+
+  // Handle window leave / enter
+  document.addEventListener("mouseleave", () => {
+    isVisible = false;
+    dot.classList.remove("custom-cursor-visible");
+    ring.classList.remove("custom-cursor-visible");
+  });
+
+  document.addEventListener("mouseenter", () => {
+    isVisible = true;
+    dot.classList.add("custom-cursor-visible");
+    ring.classList.add("custom-cursor-visible");
+  });
+
+  // Handle mousedown & mouseup for tactile click punch
+  window.addEventListener("mousedown", () => {
+    ring.classList.add("cursor-click");
+    dot.classList.add("cursor-click");
+  });
+
+  window.addEventListener("mouseup", () => {
+    ring.classList.remove("cursor-click");
+    dot.classList.remove("cursor-click");
+  });
+
+  // Interactive Target Selectors
+  const interactiveSelector = "a, button, .btn, input[type='button'], input[type='submit'], [role='button'], .project-card, .timeline-card, .skill-badge, .highlight-box, .cert-folder-card, .social-icon-btn, .theme-toggle-btn, .nav-link, .exp-tab-btn, .lab-tab-btn, .contact-tab-btn, .contact-info-card, .back-to-top, .auth-profile-card";
+  const textSelector = "input[type='text'], input[type='email'], input[type='password'], input[type='search'], textarea";
+
+  document.addEventListener("mouseover", (e) => {
+    if (e.target.closest(textSelector)) {
+      ring.classList.add("cursor-text");
+      dot.classList.add("cursor-text");
+      ring.classList.remove("cursor-hover");
+      dot.classList.remove("cursor-hover");
+    } else if (e.target.closest(interactiveSelector)) {
+      ring.classList.add("cursor-hover");
+      dot.classList.add("cursor-hover");
+      ring.classList.remove("cursor-text");
+      dot.classList.remove("cursor-text");
+    }
+  });
+
+  document.addEventListener("mouseout", (e) => {
+    const fromText = e.target.closest(textSelector);
+    const fromInteractive = e.target.closest(interactiveSelector);
+
+    if (fromText) {
+      ring.classList.remove("cursor-text");
+      dot.classList.remove("cursor-text");
+    }
+    if (fromInteractive) {
+      ring.classList.remove("cursor-hover");
+      dot.classList.remove("cursor-hover");
+    }
+  });
+
+  // 60/120fps Animation Loop
+  function renderCursor() {
+    if (isVisible) {
+      // Precision dot snaps instantly with micro-interpolation
+      dotX += (mouseX - dotX) * 0.8;
+      dotY += (mouseY - dotY) * 0.8;
+      dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
+
+      // Outer follower ring glides with fluid spring physics
+      ringX += (mouseX - ringX) * 0.18;
+      ringY += (mouseY - ringY) * 0.18;
+      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+    }
+
+    // Render micro-stardust particles on canvas
+    ctx.clearRect(0, 0, width, height);
+    for (let i = trailParticles.length - 1; i >= 0; i--) {
+      const p = trailParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= p.decay;
+
+      if (p.alpha <= 0) {
+        trailParticles.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    requestAnimationFrame(renderCursor);
+  }
+
+  requestAnimationFrame(renderCursor);
 }
 
 /**

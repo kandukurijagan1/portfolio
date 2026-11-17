@@ -282,7 +282,7 @@
 
 
 /* --------------------------------------------------------------------------
-   7. AMBIENT FLUID CURSOR AURA (SMOOTH LERP FOLLOWER)
+   7. AMBIENT FLUID CURSOR AURA & CINEMATIC INTERACTIVE CURSOR ENGINE
    -------------------------------------------------------------------------- */
 .cursor-ambient-aura {
   position: fixed;
@@ -328,6 +328,153 @@
     rgba(124, 58, 237, 0.04) 45%,
     transparent 70%
   );
+}
+
+/* Precision Inner Core Dot */
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-cyan, #38bdf8);
+  box-shadow: 0 0 10px var(--accent-cyan, #38bdf8), 0 0 20px rgba(56, 189, 248, 0.6);
+  pointer-events: none;
+  z-index: 999999;
+  will-change: transform, opacity;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0);
+  transition: opacity 0.25s ease, transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease;
+}
+
+/* Smooth Fluid Outer Spring Ring */
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(56, 189, 248, 0.7);
+  background: rgba(56, 189, 248, 0.04);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.3), inset 0 0 8px rgba(56, 189, 248, 0.12);
+  pointer-events: none;
+  z-index: 999998;
+  will-change: transform, opacity, width, height;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0);
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease,
+              background-color 0.25s ease,
+              box-shadow 0.25s ease,
+              opacity 0.25s ease,
+              border-radius 0.25s ease;
+}
+
+/* Active Visibility */
+.custom-cursor-dot.custom-cursor-visible,
+.custom-cursor-ring.custom-cursor-visible {
+  opacity: 1;
+}
+
+/* Hover Over Interactive Target (Links, Buttons, Cards) */
+.custom-cursor-ring.cursor-hover {
+  width: 58px;
+  height: 58px;
+  border-color: var(--accent-cyan, #38bdf8);
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.45), 0 0 45px rgba(139, 92, 246, 0.25), inset 0 0 14px rgba(56, 189, 248, 0.2);
+  animation: cursorPulse 1.8s infinite ease-in-out;
+}
+
+.custom-cursor-dot.cursor-hover {
+  transform: translate3d(-50%, -50%, 0) scale(0.6);
+  background: #ffffff;
+  box-shadow: 0 0 12px #ffffff, 0 0 24px var(--accent-cyan, #38bdf8);
+}
+
+/* Hover Over Text Inputs / Textarea */
+.custom-cursor-ring.cursor-text {
+  width: 4px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  background: var(--accent-cyan, #38bdf8);
+  box-shadow: 0 0 12px var(--accent-cyan, #38bdf8);
+}
+
+.custom-cursor-dot.cursor-text {
+  opacity: 0 !important;
+}
+
+/* Click Active State */
+.custom-cursor-ring.cursor-click {
+  transform: translate3d(-50%, -50%, 0) scale(0.72) !important;
+  border-color: var(--accent-purple, #a855f7);
+  background: rgba(168, 85, 247, 0.25);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.6);
+}
+
+.custom-cursor-dot.cursor-click {
+  transform: translate3d(-50%, -50%, 0) scale(1.4) !important;
+  background: var(--accent-purple, #c084fc);
+  box-shadow: 0 0 18px var(--accent-purple, #a855f7);
+}
+
+@keyframes cursorPulse {
+  0%, 100% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    box-shadow: 0 0 24px rgba(56, 189, 248, 0.45), inset 0 0 14px rgba(56, 189, 248, 0.2);
+  }
+  50% {
+    transform: translate3d(-50%, -50%, 0) scale(1.08);
+    box-shadow: 0 0 32px rgba(56, 189, 248, 0.6), inset 0 0 20px rgba(56, 189, 248, 0.35);
+  }
+}
+
+/* Light Mode Overrides for Custom Cursor */
+[data-theme="light"] .custom-cursor-dot {
+  background: #2563eb;
+  box-shadow: 0 0 10px #2563eb, 0 0 18px rgba(37, 99, 235, 0.45);
+}
+
+[data-theme="light"] .custom-cursor-ring {
+  border-color: rgba(37, 99, 235, 0.65);
+  background: rgba(37, 99, 235, 0.05);
+  box-shadow: 0 0 16px rgba(37, 99, 235, 0.2), inset 0 0 8px rgba(37, 99, 235, 0.1);
+}
+
+[data-theme="light"] .custom-cursor-ring.cursor-hover {
+  border-color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.14);
+  box-shadow: 0 0 24px rgba(37, 99, 235, 0.35), inset 0 0 14px rgba(37, 99, 235, 0.15);
+}
+
+[data-theme="light"] .custom-cursor-dot.cursor-hover {
+  background: #1d4ed8;
+  box-shadow: 0 0 12px #1d4ed8;
+}
+
+[data-theme="light"] .custom-cursor-ring.cursor-text {
+  background: #2563eb;
+  box-shadow: 0 0 12px #2563eb;
+}
+
+[data-theme="light"] .custom-cursor-ring.cursor-click {
+  border-color: #1d4ed8;
+  background: rgba(29, 78, 216, 0.25);
+  box-shadow: 0 0 25px rgba(29, 78, 216, 0.5);
+}
+
+/* Hide custom cursor on coarse pointer / touch devices */
+@media (pointer: coarse), (hover: none) {
+  .custom-cursor-dot,
+  .custom-cursor-ring,
+  #cursor-trail-canvas {
+    display: none !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
