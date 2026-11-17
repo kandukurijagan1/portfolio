@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initCurrentYear();
   initPhotoLightbox();
   initSEODynamicSync();
+  initFaqAccordion();
 });
 
 /**
@@ -250,4 +251,59 @@ function initSEODynamicSync() {
       canonicalLink.setAttribute('href', origin + '/');
     }
   }
+}
+
+/**
+ * 9. FAQ Single-Open Exclusive Accordion
+ * - Clicking anywhere on a closed box opens it
+ * - When one box opens, any previously opened block automatically closes
+ * - Clicking summary on open box closes it
+ * - Links and interactive elements inside answer remain fully clickable
+ * - Smoothly updates arrow indicator (+ / −)
+ */
+function initFaqAccordion() {
+  const faqItems = document.querySelectorAll(".faq-item");
+  if (!faqItems.length) return;
+
+  faqItems.forEach(item => {
+    // 1. Listen for toggle event to synchronize indicators and enforce mutual exclusivity
+    item.addEventListener("toggle", () => {
+      const arrow = item.querySelector(".faq-arrow");
+      if (item.open) {
+        if (arrow) arrow.textContent = "−";
+        item.classList.add("active");
+
+        // Mutual exclusivity: Close every other open FAQ item
+        faqItems.forEach(other => {
+          if (other !== item && other.open) {
+            other.open = false;
+            other.classList.remove("active");
+            const otherArrow = other.querySelector(".faq-arrow");
+            if (otherArrow) otherArrow.textContent = "+";
+          }
+        });
+      } else {
+        if (arrow) arrow.textContent = "+";
+        item.classList.remove("active");
+      }
+    });
+
+    // 2. Click anywhere in box to open
+    item.addEventListener("click", (e) => {
+      // Do not intercept interactive elements inside content (links, buttons, inputs)
+      if (e.target.closest("a, button, input, textarea")) {
+        return;
+      }
+
+      // If user clicked directly inside summary, native details toggling handles it
+      if (e.target.closest("summary")) {
+        return;
+      }
+
+      // If clicked anywhere else on the closed box, open it
+      if (!item.open) {
+        item.open = true;
+      }
+    });
+  });
 }
