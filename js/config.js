@@ -26,7 +26,6 @@ const PORTFOLIO_CONFIG = {
       adminEmail: "kandukurijagan99@gmail.com",
       googleClientId: "902168382803-6gof845v72ku6k4lp4mecsgr3l1uc3s0.apps.googleusercontent.com",
       redirectUri: "https://kandukuri-jagan-portfolio.netlify.app",
-      fallbackRedirectUri: "https://aaryanaqua.netlify.app/",
       enableDevLogin: false
     },
     // Supabase Real-Time PostgreSQL Database Configuration

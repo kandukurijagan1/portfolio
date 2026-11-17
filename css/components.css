@@ -1697,35 +1697,42 @@
 .contact-grid {
   display: grid;
   grid-template-columns: 0.85fr 1.15fr;
-  gap: 40px;
+  gap: 36px;
+  align-items: stretch;
 }
 
 @media (max-width: 992px) {
   .contact-grid {
     grid-template-columns: 1fr;
+    gap: 28px;
   }
 }
 
 .contact-info-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .contact-info-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 20px 24px;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
   transition: all var(--transition-fast);
 }
 
 .contact-info-card:hover {
   border-color: var(--border-cyan);
-  transform: translateX(4px);
+  transform: translateY(-2px);
 }
 
 .contact-icon-box {
@@ -1777,13 +1784,25 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  padding: 40px;
+  padding: 36px;
   box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+  box-sizing: border-box;
+  position: relative;
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
   .contact-form-card {
-    padding: 24px;
+    padding: 28px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-form-card {
+    padding: 20px 16px;
   }
 }
 
@@ -3530,22 +3549,21 @@ textarea.form-control {
    GOOGLE AUTHENTICATION, THREAD HISTORY & ADMIN PORTAL STYLES
    ============================================================================== */
 
-/* 1. Unauthenticated Security Barrier */
+/* 1. Unauthenticated Security Barrier (Seamlessly Centered Inside Form Card) */
 #contact-auth-barrier,
 .contact-auth-barrier {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
   width: 100%;
   box-sizing: border-box;
-  padding: 42px 28px;
-  background: rgba(13, 18, 31, 0.75);
-  border: 1px solid var(--border-glow, rgba(56, 189, 248, 0.25));
-  border-radius: var(--radius-xl, 20px);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  padding: 24px 16px;
+  margin: auto 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 #contact-auth-barrier.hidden,
@@ -3554,36 +3572,43 @@ textarea.form-control {
 }
 
 .auth-barrier-icon {
-  width: 64px;
-  height: 64px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
-  background: rgba(56, 189, 248, 0.12);
+  background: rgba(56, 189, 248, 0.1);
   border: 1px solid rgba(56, 189, 248, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+  margin: 0 auto 20px auto;
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.22);
+  transition: transform var(--transition-fast);
+}
+
+.auth-barrier-icon:hover {
+  transform: scale(1.06);
 }
 
 .auth-barrier-title {
-  font-size: 1.45rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: var(--text-primary, #ffffff);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   letter-spacing: -0.02em;
+  text-align: center;
 }
 
 .auth-barrier-lead {
-  font-size: 0.92rem;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  line-height: 1.65;
   color: var(--text-secondary, #94a3b8);
   max-width: 440px;
-  margin-bottom: 24px;
+  margin: 0 auto 28px auto;
+  text-align: center;
 }
 
 .google-btn-slot {
-  margin: 12px 0 20px;
+  margin: 0 0 20px 0;
   display: flex;
   justify-content: center;
   width: 100%;
@@ -3598,14 +3623,14 @@ textarea.form-control {
   background: #ffffff;
   color: #1f2937;
   font-weight: 700;
-  font-size: 0.95rem;
-  padding: 12px 28px;
+  font-size: 0.98rem;
+  padding: 14px 34px;
   border-radius: 9999px;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
   cursor: pointer;
   transition: all 0.25s ease;
-  min-width: 240px;
+  min-width: 250px;
   width: auto;
 }
 
@@ -3613,21 +3638,22 @@ textarea.form-control {
 .btn-google-auth:hover {
   background: #f8fafc;
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
 }
 
 .auth-barrier-notice {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: #10b981;
   background: rgba(16, 185, 129, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.25);
-  padding: 6px 14px;
+  padding: 8px 18px;
   border-radius: 9999px;
   font-weight: 600;
-  margin-top: 14px;
+  margin: 0 auto;
 }
 
 /* 2. Logged-in Status Bar */
@@ -3636,12 +3662,12 @@ textarea.form-control {
   align-items: center;
   justify-content: space-between;
   padding: 12px 18px;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.92);
   border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 14px;
   margin-bottom: 22px;
-  flex-wrap: nowrap;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 12px;
   width: 100%;
   box-sizing: border-box;
 }

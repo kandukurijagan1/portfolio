@@ -388,6 +388,15 @@
 
 
 
+/* Responsive Motion Reset for Clean Mobile Alignment */
+@media (max-width: 992px) {
+  .reveal-left,
+  .reveal-right {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,

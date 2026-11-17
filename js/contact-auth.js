@@ -127,13 +127,13 @@
   /**
    * 3. DIRECT GOOGLE OAUTH 2.0 POPUP FLOW
    * Triggers official Google Accounts chooser popup (accounts.google.com)
-   * Direct parity with Aaryan Aqua Netlify cloud authentication
+   * Direct Google OAuth 2.0 authentication popup flow
    */
-  window.launchDirectGoogleOAuth = function (overrideRedirect) {
+  window.launchDirectGoogleOAuth = function () {
     const config = (window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.auth || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.auth))) || {};
     const clientId = config.googleClientId || '902168382803-6gof845v72ku6k4lp4mecsgr3l1uc3s0.apps.googleusercontent.com';
-    let redirectUri = overrideRedirect || config.redirectUri || 'https://kandukuri-jagan-portfolio.netlify.app';
-    if (!overrideRedirect && typeof window !== 'undefined' && window.location && window.location.origin.includes('localhost')) {
+    let redirectUri = config.redirectUri || 'https://kandukuri-jagan-portfolio.netlify.app';
+    if (typeof window !== 'undefined' && window.location && window.location.origin.includes('localhost')) {
       redirectUri = window.location.origin + '/';
     }
 
@@ -397,8 +397,10 @@
         barrierEl.style.setProperty('display', 'flex', 'important');
         barrierEl.style.flexDirection = 'column';
         barrierEl.style.alignItems = 'center';
+        barrierEl.style.justifyContent = 'center';
         barrierEl.style.textAlign = 'center';
         barrierEl.style.width = '100%';
+        barrierEl.style.margin = 'auto 0';
       }
       if (authStatusEl) {
         authStatusEl.classList.add('hidden');

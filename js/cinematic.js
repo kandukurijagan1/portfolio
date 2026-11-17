@@ -638,6 +638,7 @@
         onComplete() {
           // Add the active class for compatibility with existing CSS
           el.classList.add("active");
+          gsap.set(el, { clearProps: "transform" });
         }
       });
     });
