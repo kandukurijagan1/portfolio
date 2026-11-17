@@ -44,7 +44,14 @@ create policy "Enable public read access"
   for select
   using (true);
 
--- 6. Enable Realtime Replication for instant push notifications in Admin Dashboard
+-- 6. Policy: Enable delete for portfolio_messages (Admin curation)
+drop policy if exists "Enable delete for portfolio_messages" on public.portfolio_messages;
+create policy "Enable delete for portfolio_messages"
+  on public.portfolio_messages
+  for delete
+  using (true);
+
+-- 7. Enable Realtime Replication for instant push notifications in Admin Dashboard
 do $$
 begin
   if not exists (

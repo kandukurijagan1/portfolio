@@ -928,7 +928,7 @@
       try {
         const sbResult = await window.PortfolioSupabase.getAllMessages();
         if (sbResult && sbResult.success && Array.isArray(sbResult.messages)) {
-          adminMessages = sbResult.messages;
+          adminMessages = filterDeletedMessages(sbResult.messages);
           if (totalMetric) totalMetric.textContent = adminMessages.length;
           if (sendersMetric) sendersMetric.textContent = countUnique(adminMessages);
           renderAdminCards(adminMessages);
@@ -936,6 +936,8 @@
           // Listen for live incoming messages via websocket
           try {
             window.PortfolioSupabase.subscribeToRealtimeMessages(newMsg => {
+              const deletedIds = getAdminDeletedIds();
+              if (deletedIds.includes(newMsg.id) || deletedIds.includes(newMsg.timestamp)) return;
               if (!adminMessages.some(m => m.id === newMsg.id || (m.timestamp === newMsg.timestamp && m.message === newMsg.message))) {
                 adminMessages.unshift(newMsg);
                 if (totalMetric) totalMetric.textContent = adminMessages.length;
@@ -971,7 +973,7 @@
       if (restRes.ok) {
         const rows = await restRes.json();
         if (Array.isArray(rows)) {
-          adminMessages = rows.map(r => ({
+          const mapped = rows.map(r => ({
             id: r.id,
             name: r.name,
             email: r.email,
@@ -982,6 +984,7 @@
             avatar: r.avatar_url,
             is_google_verified: r.is_google_verified
           }));
+          adminMessages = filterDeletedMessages(mapped);
 
           if (totalMetric) totalMetric.textContent = adminMessages.length;
           if (sendersMetric) sendersMetric.textContent = countUnique(adminMessages);
@@ -1002,7 +1005,7 @@
         if (res.ok) {
           const data = await res.json();
           if (data.status === 'success' && Array.isArray(data.messages)) {
-            adminMessages = data.messages;
+            adminMessages = filterDeletedMessages(data.messages);
             if (totalMetric) totalMetric.textContent = data.total || adminMessages.length;
             if (sendersMetric) sendersMetric.textContent = data.uniqueContacts || countUnique(adminMessages);
             renderAdminCards(adminMessages);
@@ -1022,6 +1025,33 @@
     `;
     const retryBtn = feed.querySelector('#btn-admin-retry');
     if (retryBtn) retryBtn.addEventListener('click', loadAdminMessages);
+  }
+
+  function getAdminDeletedIds() {
+    try {
+      const raw = localStorage.getItem('portfolio_admin_deleted_ids');
+      return raw ? JSON.parse(raw) : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function addAdminDeletedId(idOrKey) {
+    if (!idOrKey) return;
+    const list = getAdminDeletedIds();
+    if (!list.includes(idOrKey)) {
+      list.push(idOrKey);
+      try {
+        localStorage.setItem('portfolio_admin_deleted_ids', JSON.stringify(list));
+      } catch (_) {}
+    }
+  }
+
+  function filterDeletedMessages(list) {
+    if (!Array.isArray(list)) return [];
+    const deletedIds = getAdminDeletedIds();
+    if (!deletedIds.length) return list;
+    return list.filter(m => !deletedIds.includes(m.id) && !deletedIds.includes(m.timestamp));
   }
 
   function countUnique(list) {
@@ -1096,6 +1126,15 @@
                 <span>Reply in Gmail</span>
               </a>
               ${whatsappBtn}
+              <button type="button" class="btn-admin-action btn-delete-msg" onclick="window.PortfolioAuth.deleteMessage('${escapeHtml(m.id || '')}', '${escapeHtml(m.name || 'Visitor')}', '${escapeHtml(m.timestamp || '')}', '${escapeHtml(m.email || '')}', '${escapeHtml(m.message || '').substring(0, 30)}')" title="Permanently delete this inquiry">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                <span>Delete</span>
+              </button>
             </div>
           </div>
 
@@ -1188,6 +1227,63 @@
     });
   }
 
+  /**
+   * 13. ADMIN DELETE MESSAGE
+   * Permanently deletes message from Supabase PostgreSQL + UI feed
+   */
+  async function deleteAdminMessage(id, name, timestamp, email, messageSnippet) {
+    if (!isAdmin()) {
+      if (window.showToast) window.showToast('Unauthorized: Only admin can delete messages.', 'error');
+      else alert('Unauthorized: Only admin can delete messages.');
+      return;
+    }
+
+    const senderDisplay = name || email || 'this inquiry';
+    const confirmDelete = window.confirm(`Permanently delete message from "${senderDisplay}"?\n\nThis will remove the inquiry from your inbox.`);
+    if (!confirmDelete) return;
+
+    // 1. Immediately cache in deleted IDs to prevent reappearance
+    if (id) addAdminDeletedId(id);
+    if (timestamp) addAdminDeletedId(timestamp);
+
+    // 2. Filter out in-memory array and update UI instantly
+    adminMessages = adminMessages.filter(m => {
+      if (id && m.id) return m.id !== id;
+      if (timestamp && m.timestamp) return m.timestamp !== timestamp;
+      return true;
+    });
+
+    const totalMetric = document.getElementById('admin-metric-total');
+    const sendersMetric = document.getElementById('admin-metric-senders');
+    if (totalMetric) totalMetric.textContent = adminMessages.length;
+    if (sendersMetric) sendersMetric.textContent = countUnique(adminMessages);
+
+    // Re-render admin feed with remaining messages
+    renderAdminCards(adminMessages);
+
+    if (window.showToast) {
+      window.showToast(`Deleted message from ${senderDisplay}`, 'success');
+    }
+
+    // 3. Delete from Supabase PostgreSQL table
+    if (id && window.PortfolioSupabase && typeof window.PortfolioSupabase.deleteMessage === 'function') {
+      try {
+        await window.PortfolioSupabase.deleteMessage(id);
+      } catch (err) {
+        console.warn('Supabase delete background notice:', err);
+      }
+    }
+
+    // 4. Delete from Google Apps Script Web App backup if configured
+    try {
+      const webhookUrl = (window.PORTFOLIO_CONFIG && window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.contactWebhookUrl) || '';
+      if (webhookUrl && webhookUrl.startsWith('https://script.google.com/')) {
+        const delUrl = `${webhookUrl}?action=deleteMessage&adminEmail=${encodeURIComponent(ADMIN_EMAIL)}&timestamp=${encodeURIComponent(timestamp || '')}&email=${encodeURIComponent(email || '')}&message=${encodeURIComponent(messageSnippet || '')}`;
+        fetch(delUrl, { mode: 'no-cors' }).catch(() => {});
+      }
+    } catch (_) {}
+  }
+
   function escapeHtml(str) {
     if (!str) return '';
     return str
@@ -1208,6 +1304,7 @@
       }
     },
     handleSupabaseUser: handleSupabaseUser,
+    deleteMessage: deleteAdminMessage,
     signOut: handleSignOut
   };
 

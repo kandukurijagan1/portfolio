@@ -120,6 +120,26 @@ function doGet(e) {
       });
     }
 
+    // --- WORKFLOW D: Admin Delete Message from Sheet ---
+    if (action === "deleteMessage") {
+      var adminEmail = (e.parameter.adminEmail || "").toString().trim().toLowerCase();
+      if (adminEmail !== ADMIN_EMAIL.toLowerCase()) {
+        return createJsonResponse({
+          status: "error",
+          message: "Unauthorized. Admin access restricted to " + ADMIN_EMAIL
+        });
+      }
+      var targetTimestamp = (e.parameter.timestamp || "").toString().trim();
+      var targetEmail = (e.parameter.email || "").toString().trim().toLowerCase();
+      var targetMessage = (e.parameter.message || "").toString().trim();
+
+      var deleteResult = deleteSheetRow(targetTimestamp, targetEmail, targetMessage);
+      return createJsonResponse({
+        status: deleteResult.success ? "success" : "error",
+        message: deleteResult.message
+      });
+    }
+
     // --- WORKFLOW C: System Health Check & Diagnostics ---
     var diag = {
       status: "online",
@@ -200,19 +220,34 @@ function doPost(e) {
 
     // 2. Dispatch primary notification to Kandukuri Jagan
     try {
-      var emailSubject = "🚀 [Portfolio Message] " + subject + " — from " + name + (isGoogleVerified ? " (Google Verified ✓)" : "");
+      // Clean subject without spam-triggering emojis or deceptive flags
+      var emailSubject = "[Portfolio Inquiry] " + subject + " - " + name;
+
+      var adminPlainText = 
+        "NEW PORTFOLIO INQUIRY\n" +
+        "========================================\n" +
+        "Sender: " + name + " (" + email + ")" + (isGoogleVerified ? " [Google Verified]" : "") + "\n" +
+        "Subject: " + subject + "\n" +
+        "Time: " + timestamp + "\n" +
+        "Status: " + (sheetResult.success ? "Recorded in Sheet" : "Direct Dispatch") + "\n\n" +
+        "MESSAGE CONTENT:\n" +
+        message + "\n\n" +
+        "========================================\n" +
+        "Reply directly to: " + email + "\n" +
+        "Admin Portal: https://kandukuri-jagan-portfolio.netlify.app/#contact";
+
       var adminHtml = 
         '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f19; color: #f8fafc; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b; box-shadow: 0 15px 35px rgba(0,0,0,0.5);">' +
           '<div style="background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%); padding: 26px 24px; text-align: center;">' +
-            '<h1 style="margin: 0; font-size: 22px; font-weight: 800; color: #ffffff;">🚀 New Portfolio Connection!</h1>' +
+            '<h1 style="margin: 0; font-size: 22px; font-weight: 800; color: #ffffff;">New Portfolio Connection!</h1>' +
             '<p style="margin: 6px 0 0; font-size: 13px; color: #e0e7ff;">A verified visitor reached out via kandukuri-jagan-portfolio.netlify.app</p>' +
           '</div>' +
           '<div style="padding: 24px;">' +
             '<div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px; padding: 10px 14px; margin-bottom: 20px;">' +
-              '<span style="color: #10b981; font-size: 13px; font-weight: 700;">' + (sheetResult.success ? "✅ Recorded in Google Sheet" : "⚠️ Sheet: " + sheetResult.error) + ' • Verified Email: ' + email + '</span>' +
+              '<span style="color: #10b981; font-size: 13px; font-weight: 700;">' + (sheetResult.success ? "Recorded in Google Sheet" : "Direct Message: " + sheetResult.error) + ' • Verified Email: ' + email + '</span>' +
             '</div>' +
             '<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">' +
-              '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px; width: 90px;"><strong>Sender:</strong></td><td style="padding: 8px 0; color: #ffffff; font-size: 15px; font-weight: 700;">' + name + (isGoogleVerified ? ' <span style="background: #10b981; color: #000; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 800;">GOOGLE VERIFIED ✓</span>' : '') + '</td></tr>' +
+              '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px; width: 90px;"><strong>Sender:</strong></td><td style="padding: 8px 0; color: #ffffff; font-size: 15px; font-weight: 700;">' + name + (isGoogleVerified ? ' <span style="background: #10b981; color: #000; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 800;">VERIFIED</span>' : '') + '</td></tr>' +
               '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px;"><strong>Email:</strong></td><td style="padding: 8px 0;"><a href="mailto:' + email + '" style="color: #38bdf8; text-decoration: none; font-weight: 600;">' + email + '</a></td></tr>' +
               '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px;"><strong>Subject:</strong></td><td style="padding: 8px 0; color: #f1f5f9; font-size: 14px; font-weight: 600;">' + subject + '</td></tr>' +
               '<tr><td style="padding: 8px 0; color: #94a3b8; font-size: 13px;"><strong>Time:</strong></td><td style="padding: 8px 0; color: #64748b; font-size: 12px; font-family: monospace;">' + timestamp + '</td></tr>' +
@@ -222,7 +257,7 @@ function doPost(e) {
               '<div style="color: #e2e8f0; font-size: 14px; line-height: 1.65; white-space: pre-wrap;">' + message + '</div>' +
             '</div>' +
             '<div style="text-align: center; margin: 20px 0 10px;">' +
-              '<a href="mailto:' + email + '?subject=Re: ' + encodeURIComponent(subject) + '" style="display: inline-block; background: linear-gradient(135deg, #38bdf8, #6366f1); color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 700; font-size: 14px;">Reply Directly to ' + name + ' ✉️</a>' +
+              '<a href="mailto:' + email + '?subject=Re: ' + encodeURIComponent(subject) + '" style="display: inline-block; background: linear-gradient(135deg, #38bdf8, #6366f1); color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 700; font-size: 14px;">Reply Directly to ' + name + '</a>' +
             '</div>' +
           '</div>' +
           '<div style="background-color: #07090e; padding: 16px 20px; text-align: center; border-top: 1px solid #1e293b; color: #64748b; font-size: 12px;">' +
@@ -234,9 +269,10 @@ function doPost(e) {
       MailApp.sendEmail({
         to: ADMIN_EMAIL,
         subject: emailSubject,
+        body: adminPlainText,
         htmlBody: adminHtml,
         replyTo: email,
-        name: "Portfolio: " + name
+        name: "KJ Portfolio Inbox"
       });
     } catch (adminErr) {
       Logger.log("Admin email error: " + adminErr.toString());
@@ -248,6 +284,15 @@ function doPost(e) {
         var firstName = name.split(" ")[0] || name;
         var visitorSubject = "Thank you for reaching out! — Kandukuri Jagan";
         
+        var visitorPlainText = 
+          "Hi " + firstName + ",\n\n" +
+          "Thank you for contacting me through my portfolio. I have received your message regarding \"" + subject + "\" and will get back to you shortly.\n\n" +
+          "For urgent inquiries, call/WhatsApp me at +91 8367047947 or connect via LinkedIn: https://www.linkedin.com/in/jagan-kandukuri-053a0331b/\n\n" +
+          "Best regards,\n" +
+          "Kandukuri Jagan\n" +
+          "Full Stack Developer • Synora'26 Main Lead\n" +
+          "Saveetha University, Chennai (CGPA 9.04)";
+
         var visitorHtml = 
           '<div style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; max-width: 580px; margin: 0 auto; background-color: #0d131f; color: #f8fafc; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b; box-shadow: 0 15px 35px rgba(0,0,0,0.5); padding: 32px 28px;">' +
             '<h2 style="margin: 0 0 16px; font-size: 24px; font-weight: 800; color: #38bdf8; letter-spacing: -0.3px;">Message Received!</h2>' +
@@ -274,6 +319,7 @@ function doPost(e) {
         MailApp.sendEmail({
           to: email,
           subject: visitorSubject,
+          body: visitorPlainText,
           htmlBody: visitorHtml,
           name: "Kandukuri Jagan",
           replyTo: ADMIN_EMAIL
@@ -422,6 +468,45 @@ function saveToSheet(name, email, subject, message, timestamp, avatar, isGoogleV
   }
 }
 
+
+/**
+ * Helper: Delete a message row from Google Sheet
+ */
+function deleteSheetRow(timestamp, email, messageSnippet) {
+  try {
+    var ss = getSpreadsheetInstance();
+    if (!ss) return { success: false, message: "No spreadsheet connected" };
+    var sheet = ss.getSheetByName("Sheet1") || ss.getActiveSheet() || ss.getSheets()[0];
+    if (!sheet || sheet.getLastRow() <= 1) return { success: false, message: "Sheet is empty" };
+
+    var data = sheet.getDataRange().getValues();
+    for (var i = data.length - 1; i >= 1; i--) {
+      var row = data[i];
+      var rowTime = (row[0] || "").toString().trim();
+      var rowEmail = (row[2] || "").toString().trim().toLowerCase();
+      var rowMsg = (row[4] || "").toString().trim();
+
+      var match = false;
+      if (timestamp && rowTime === timestamp) {
+        match = true;
+      } else if (email && rowEmail === email.toLowerCase()) {
+        if (!messageSnippet || rowMsg.indexOf(messageSnippet) !== -1) {
+          match = true;
+        }
+      }
+
+      if (match) {
+        sheet.deleteRow(i + 1);
+        Logger.log("Deleted row " + (i + 1) + " for " + email);
+        return { success: true, message: "Row deleted successfully" };
+      }
+    }
+    return { success: false, message: "Message not found in sheet" };
+  } catch (err) {
+    Logger.log("deleteSheetRow error: " + err.toString());
+    return { success: false, message: err.toString() };
+  }
+}
 
 /**
  * ==============================================================================

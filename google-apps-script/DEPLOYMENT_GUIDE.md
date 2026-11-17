@@ -47,6 +47,35 @@ When a visitor fills out the contact form on your portfolio:
 
 ---
 
+## 🛡️ How to Stop Notification Emails from Going to the Spam Folder (Guaranteed 30-Second Gmail Fix)
+
+Because the automated email notification is sent by Google Apps Script from your own account (`kandukurijagan99@gmail.com`) to yourself with an external visitor `replyTo`, Gmail's automated spam filter flags self-sent automated messages unless you set a Gmail Filter.
+
+### Simple 4-Step Gmail Rule (Never Goes to Spam Again):
+1. Open **[Gmail](https://mail.google.com)** on your computer while signed into `kandukurijagan99@gmail.com`.
+2. In the top Gmail search bar, click the **"Show search options"** sliders icon on the right end of the search bar.
+3. In the search filter modal:
+   - In the **Subject** field, enter: `[Portfolio Inquiry] OR [Portfolio Message]`
+   - Or in the **Includes the words** field, enter: `kandukuri-jagan-portfolio.netlify.app`
+4. Click **"Create filter"** (bottom right of the filter box).
+5. On the options screen:
+   - ✅ Check **"Never send it to Spam"**
+   - ✅ Check **"Always mark it as important"**
+   - ✅ Check **"Categorize as: Primary"**
+   - *(Optional)* Check **"Also apply filter to matching conversations"** so existing messages in Spam move directly to your Inbox!
+6. Click **"Create filter"**.
+
+From that moment on, every contact form message submitted through your portfolio will land straight in your **Primary Inbox**, 100% spam-free!
+
+---
+
+## 🗑️ Admin Message Deletion Feature
+In your portfolio's Admin Portal (signed in as `kandukurijagan99@gmail.com`):
+- Each message card now includes a **Delete** button next to *Reply in Gmail* and *WhatsApp*.
+- Clicking **Delete** prompts for confirmation, then permanently deletes the record from Supabase PostgreSQL and removes it from your live inbox feed immediately.
+
+---
+
 ## 🧪 Testing Live
 1. Open your live portfolio: [https://kandukuri-jagan-portfolio.netlify.app/#contact](https://kandukuri-jagan-portfolio.netlify.app/#contact).
 2. Enter your name, an alternate email address, subject, and message.

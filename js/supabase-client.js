@@ -218,6 +218,51 @@
     return { success: false, fallback: true, messages: [] };
   }
 
+  /**
+   * Delete a message by ID (Admin only)
+   * SDK with Direct HTTPS REST Fallback
+   */
+  async function deleteMessage(id) {
+    if (!id) return { success: false, message: 'Message ID is required' };
+    initSupabase();
+    const { url, key, tableName } = getSupabaseCredentials();
+
+    // 1. Try Supabase SDK
+    if (supabaseClient) {
+      try {
+        const { error } = await supabaseClient
+          .from(tableName)
+          .delete()
+          .eq('id', id);
+
+        if (!error) {
+          return { success: true };
+        }
+      } catch (e) {
+        console.warn('Supabase SDK delete notice:', e);
+      }
+    }
+
+    // 2. Direct HTTPS REST API Fallback
+    try {
+      const restEndpoint = `${url}/rest/v1/${tableName}?id=eq.${encodeURIComponent(id)}`;
+      const res = await fetch(restEndpoint, {
+        method: 'DELETE',
+        headers: {
+          'apikey': key,
+          'Authorization': `Bearer ${key}`
+        }
+      });
+      if (res.ok) {
+        return { success: true };
+      }
+    } catch (err) {
+      console.warn('Direct REST delete error:', err);
+    }
+
+    return { success: false, fallback: true, message: 'Could not delete from Supabase' };
+  }
+
   function formatMessageRow(row) {
     return {
       id: row.id,
@@ -289,6 +334,7 @@
     saveMessage: saveMessage,
     getMessageHistory: getMessageHistory,
     getAllMessages: getAllMessages,
+    deleteMessage: deleteMessage,
     subscribeToRealtimeMessages: subscribeToRealtimeMessages
   };
 })();
