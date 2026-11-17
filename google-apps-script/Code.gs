@@ -19,6 +19,9 @@
 var ADMIN_EMAIL = "kandukurijagan99@gmail.com";
 var RECIPIENT_EMAIL = "kandukurijagan99@gmail.com";
 
+// Security secret for client-server handshake validation (Blocks unauthenticated direct automated tools)
+var SECURITY_SECRET = "KJ_PORTFOLIO_SECURE_AUTH_2026";
+
 // OPTIONAL: If this script is NOT created via "Extensions > Apps Script" inside your Google Sheet,
 // paste the Google Sheet ID below. You can find it in your Google Sheet URL:
 // https://docs.google.com/spreadsheets/d/<COPY_THIS_PART>/edit
@@ -211,8 +214,29 @@ function doPost(e) {
     var email = (data.email || "").toString().trim();
     var subject = (data.subject || "Portfolio Inquiry / Collaboration").toString().trim();
     var message = (data.message || "No message content provided.").toString().trim();
+
+    if (!email || !message) {
+      return createJsonResponse({
+        result: "error",
+        status: "missing_fields",
+        message: "Email address and message content are required."
+      });
+    }
+
+    // 🔒 ANTI-BOT & AUTOMATED TOOLS DEFENSE SHIELD
+    // Blocks external scripts, scrapers, and tools (e.g. Portfolio Message Submitter)
+    var authCheck = validateSubmissionSecurity(data, email);
+    if (!authCheck.allowed) {
+      Logger.log("BLOCKED AUTOMATED SUBMISSION: " + authCheck.status + " | Reason: " + authCheck.message + " | Email: " + email);
+      return createJsonResponse({
+        result: "error",
+        status: authCheck.status,
+        message: authCheck.message
+      });
+    }
+
     var avatar = (data.avatar || "").toString().trim();
-    var isGoogleVerified = (data.googleVerified === "true" || data.googleVerified === true || Boolean(data.googleSub));
+    var isGoogleVerified = authCheck.isGoogleVerified;
     var timestamp = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy, hh:mm a") + " IST";
 
     // 1. Save submission into Google Sheet
@@ -506,6 +530,123 @@ function deleteSheetRow(timestamp, email, messageSnippet) {
     Logger.log("deleteSheetRow error: " + err.toString());
     return { success: false, message: err.toString() };
   }
+}
+
+/**
+ * ==============================================================================
+ * 4B. SECURITY SUBSYSTEM: Anti-Bot, Anti-Spam & Google Token Authentication
+ * ==============================================================================
+ */
+
+/**
+ * Validates whether incoming submission has legitimate origin or verified Google auth
+ */
+function validateSubmissionSecurity(data, email) {
+  // 1. Honeypot check (hidden field that automated tools/bots blindly fill)
+  var honeypot = (data.hp_trap || data.website_hp || data.honeypot || "").toString().trim();
+  if (honeypot.length > 0) {
+    return {
+      allowed: false,
+      status: "bot_trap_triggered",
+      message: "Automated submission rejected by honeypot security filter."
+    };
+  }
+
+  // 2. Rate Limiting via Apps Script CacheService (Blocks rapid bursts like 5 submissions in 10s)
+  var cache = CacheService.getScriptCache();
+  var cleanEmail = (email || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  var rateKey = "rl_" + cleanEmail;
+  if (cache.get(rateKey)) {
+    return {
+      allowed: false,
+      status: "rate_limited",
+      message: "Rate limit active: A message was recently submitted from this email. Please wait 45 seconds before sending another."
+    };
+  }
+
+  // 3. Cryptographic Google Token Verification (Tier 1)
+  var googleToken = (data.googleToken || "").toString().trim();
+  if (googleToken) {
+    var gResult = verifyGoogleToken(googleToken, email);
+    if (gResult.valid) {
+      cache.put(rateKey, "active", 45);
+      return { allowed: true, isGoogleVerified: true };
+    }
+  }
+
+  // 4. Portfolio Client Handshake Signature Verification (Tier 2)
+  var handshake = (data.clientHandshake || "").toString().trim();
+  var clientTime = parseInt(data.clientTime || "0", 10);
+  if (handshake && clientTime > 0) {
+    var now = new Date().getTime();
+    // Allow within a 15-minute validity window
+    if (Math.abs(now - clientTime) < 15 * 60 * 1000) {
+      var expectedHash = computeHandshakeHash(email, clientTime);
+      if (handshake === expectedHash) {
+        cache.put(rateKey, "active", 45);
+        return {
+          allowed: true,
+          isGoogleVerified: (data.googleVerified === "true" || data.googleVerified === true || Boolean(data.googleSub))
+        };
+      }
+    }
+  }
+
+  // 5. If neither valid Google Token nor legitimate Client Handshake signature is present:
+  // Reject immediately! (Prevents any external bot, curl, Postman, or tool like Portfolio Message Submitter)
+  return {
+    allowed: false,
+    status: "unauthorized_direct_submission",
+    message: "Security Notice: Direct automated submissions are blocked. Inquiries must be submitted through the verified portfolio interface."
+  };
+}
+
+/**
+ * Computes deterministic client-server handshake hash
+ */
+function computeHandshakeHash(email, timestamp) {
+  var str = (email || "").toLowerCase().trim() + "_" + timestamp + "_" + SECURITY_SECRET;
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    var charCode = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + charCode;
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36);
+}
+
+/**
+ * Cryptographically verifies Google ID Token or Access Token against Google OAuth APIs
+ */
+function verifyGoogleToken(token, claimedEmail) {
+  if (!token) return { valid: false };
+
+  // A. Check as Google ID Token (JWT)
+  try {
+    var idRes = UrlFetchApp.fetch("https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(token), { muteHttpExceptions: true });
+    if (idRes.getResponseCode() === 200) {
+      var idData = JSON.parse(idRes.getContentText());
+      if (idData && idData.email && idData.email.toLowerCase() === claimedEmail.toLowerCase()) {
+        return { valid: true, email: idData.email };
+      }
+    }
+  } catch (_) {}
+
+  // B. Check as Google OAuth2 Access Token
+  try {
+    var accRes = UrlFetchApp.fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: { "Authorization": "Bearer " + token },
+      muteHttpExceptions: true
+    });
+    if (accRes.getResponseCode() === 200) {
+      var accData = JSON.parse(accRes.getContentText());
+      if (accData && accData.email && accData.email.toLowerCase() === claimedEmail.toLowerCase()) {
+        return { valid: true, email: accData.email };
+      }
+    }
+  } catch (_) {}
+
+  return { valid: false };
 }
 
 /**

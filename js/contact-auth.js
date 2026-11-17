@@ -222,6 +222,7 @@
         email: authedEmail,
         picture: authedPic,
         sub: userInfo?.sub || '',
+        accessToken: token,
         isGoogle: true,
         authTime: Date.now()
       };
@@ -351,6 +352,7 @@
         email: payload.email,
         picture: payload.picture || '',
         sub: payload.sub,
+        idToken: response.credential,
         isGoogle: true,
         authTime: Date.now()
       };

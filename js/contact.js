@@ -140,12 +140,26 @@ function initContactForm() {
     params.append("subject", subjectVal);
     params.append("message", messageVal);
 
+    // 🔒 Security Handshake Signature & Anti-Bot Honeypot
+    const now = Date.now();
+    const handshake = computeClientHandshake(emailVal, now);
+    params.append("clientHandshake", handshake);
+    params.append("clientTime", String(now));
+
+    const hpInput = document.getElementById("hp_trap");
+    params.append("hp_trap", hpInput ? hpInput.value : "");
+
     // Attach verified Google authentication metadata
     const authUser = window.PortfolioAuth && window.PortfolioAuth.getCurrentUser();
     if (authUser) {
       params.append("avatar", authUser.picture || "");
       params.append("googleVerified", "true");
       params.append("googleSub", authUser.sub || "");
+      if (authUser.idToken) {
+        params.append("googleToken", authUser.idToken);
+      } else if (authUser.accessToken) {
+        params.append("googleToken", authUser.accessToken);
+      }
     }
 
     // Record to local thread history immediately
@@ -379,4 +393,19 @@ function launchCelebrationParticles() {
   }
 
   requestAnimationFrame(render);
+}
+
+/**
+ * Computes deterministic security handshake signature (prevents direct automated tools)
+ */
+function computeClientHandshake(email, timestamp) {
+  const secret = "KJ_PORTFOLIO_SECURE_AUTH_2026";
+  const str = (email || "").toLowerCase().trim() + "_" + timestamp + "_" + secret;
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const charCode = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + charCode;
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36);
 }

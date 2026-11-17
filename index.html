@@ -383,7 +383,21 @@
 
       <!-- Header Right Controls -->
       <div class="header-actions">
-                <!-- Theme Switcher Button -->
+        <!-- Command Palette Trigger (Ctrl+K / ⌘K) -->
+        <button type="button" class="cmd-k-trigger" id="cmd-k-trigger" title="Open Command Palette (Ctrl+K or ⌘K)" aria-label="Open Command Palette">
+          <span class="cmd-k-badge">⌘K</span>
+          <span class="cmd-k-text">Quick Actions</span>
+        </button>
+
+        <!-- Procedural Web Audio FX Toggle -->
+        <button type="button" class="audio-toggle-btn" id="audio-toggle-btn" aria-label="Toggle Web Audio FX" title="Turn Sound FX On/Off">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+
+        <!-- Theme Switcher Button -->
         <button type="button" class="theme-toggle-btn" aria-label="Toggle dark/light theme" title="Toggle theme">
           <!-- Sun Icon (Dark Mode Active) -->
           <svg class="theme-icon-sun" viewBox="0 0 24 24">
@@ -1924,6 +1938,10 @@
 
             <!-- Connected to Google Apps Script webhook -->
             <form id="portfolio-contact-form" class="contact-form" action="https://script.google.com/macros/s/AKfycbxb2uoJsZRDcn4kB8_aNXXV9BfwZhdBIJWjMpn9JeNANWMclM6icL-bukdR4IwYq_ds/exec" method="POST" novalidate>
+              <!-- Anti-Bot Honeypot Trap (Automated tools auto-fill this and get blocked) -->
+              <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
+                <input type="text" name="hp_trap" id="hp_trap" tabindex="-1" autocomplete="off">
+              </div>
               <div class="form-group-row">
                 <div class="form-group">
                   <label for="contact-name" class="form-label">Your Name *</label>
@@ -2213,5 +2231,7 @@
   <script src="js/contact-auth.js?v=8.5"></script>
   <script src="js/contact.js?v=8.5"></script>
   <script src="js/main.js?v=8.5"></script>
+  <!-- Advanced Interaction Suite: Command Palette (Ctrl+K), Web Audio FX & 3D Shimmer -->
+  <script src="js/advanced-suite.js?v=9.0"></script>
 </body>
 </html>
