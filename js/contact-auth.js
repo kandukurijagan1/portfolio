@@ -870,7 +870,7 @@
           </div>
           <div class="admin-metric-card">
             <span class="metric-label">CONNECTED DATABASE</span>
-            <strong class="metric-val" style="font-size: 0.95rem; color: #10b981;">Supabase PostgreSQL (portfolio_messages) ⚡ Live</strong>
+            <strong class="metric-val metric-val-db">Supabase PostgreSQL (portfolio_messages) ⚡ Live</strong>
           </div>
         </div>
 

@@ -1696,8 +1696,8 @@
    -------------------------------------------------------------------------- */
 .contact-grid {
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 36px;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
   align-items: stretch;
 }
 
@@ -1720,11 +1720,10 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 20px 24px;
+  padding: 18px 22px;
   display: flex;
   align-items: center;
   gap: 16px;
-  flex-wrap: wrap;
   width: 100%;
   box-sizing: border-box;
   transition: all var(--transition-fast);
@@ -1748,8 +1747,14 @@
   flex-shrink: 0;
 }
 
+.contact-card-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .contact-card-title {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1757,7 +1762,7 @@
 }
 
 .contact-card-value {
-  font-size: 1rem;
+  font-size: 0.96rem;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -1784,11 +1789,11 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  padding: 36px;
+  padding: 32px;
   box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 100%;
   box-sizing: border-box;
   position: relative;
@@ -2254,29 +2259,42 @@ textarea.form-control {
 }
 
 /* Gmail Compose Button & Email Link */
-.contact-info-card-email {
+.contact-info-card-email,
+.contact-info-card-phone {
   position: relative;
 }
 
-.contact-email-link {
+.contact-email-link,
+.contact-whatsapp-link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   color: var(--text-primary);
   text-decoration: none;
   transition: color var(--transition-fast);
+  max-width: 100%;
 }
 
-.contact-email-link:hover {
+.contact-email-link span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contact-email-link:hover,
+.contact-whatsapp-link:hover {
   color: var(--accent-cyan);
 }
 
-.contact-email-link .external-link-icon {
+.contact-email-link .external-link-icon,
+.contact-whatsapp-link .external-link-icon {
   opacity: 0.7;
   transition: transform var(--transition-fast), opacity var(--transition-fast);
+  flex-shrink: 0;
 }
 
-.contact-email-link:hover .external-link-icon {
+.contact-email-link:hover .external-link-icon,
+.contact-whatsapp-link:hover .external-link-icon {
   opacity: 1;
   transform: translate(2px, -2px);
 }
@@ -2286,15 +2304,16 @@ textarea.form-control {
   align-items: center;
   gap: 8px;
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .btn-gmail-compose {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 6px 12px;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
@@ -2317,9 +2336,9 @@ textarea.form-control {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 6px 12px;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
   background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
@@ -2338,16 +2357,40 @@ textarea.form-control {
   color: #ffffff !important;
 }
 
-.contact-whatsapp-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--text-primary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
+@media (max-width: 1200px) {
+  .contact-info-card-email,
+  .contact-info-card-phone {
+    flex-wrap: wrap;
+  }
+  .contact-info-card-email .contact-card-content,
+  .contact-info-card-phone .contact-card-content {
+    flex: 1 1 calc(100% - 64px);
+  }
+  .contact-info-card-email .contact-card-actions,
+  .contact-info-card-phone .contact-card-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+    padding-top: 10px;
+    margin-top: 2px;
+    border-top: 1px dashed var(--border-color);
+  }
 }
 
-.contact-whatsapp-link:hover {
+@media (max-width: 480px) {
+  .contact-info-card-email .contact-card-actions,
+  .contact-info-card-phone .contact-card-actions {
+    justify-content: stretch;
+  }
+  .btn-gmail-compose,
+  .btn-whatsapp-direct {
+    flex: 1;
+    justify-content: center;
+  }
+  .btn-copy-email {
+    flex-shrink: 0;
+  }
+}
   color: #25D366;
 }
 
@@ -2869,7 +2912,7 @@ textarea.form-control {
 /* Contact Section in White & Blue */
 [data-theme="light"] .contact-info-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #e2e8f0;
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
 }
 
@@ -2892,6 +2935,16 @@ textarea.form-control {
   color: #0f172a;
 }
 
+[data-theme="light"] .contact-email-link,
+[data-theme="light"] .contact-whatsapp-link {
+  color: #0f172a;
+}
+
+[data-theme="light"] .contact-email-link:hover,
+[data-theme="light"] .contact-whatsapp-link:hover {
+  color: #2563eb;
+}
+
 [data-theme="light"] .btn-copy-email {
   background: #eff6ff;
   border-color: #bfdbfe;
@@ -2904,10 +2957,269 @@ textarea.form-control {
   color: #1e40af;
 }
 
+[data-theme="light"] .contact-info-card-email .contact-card-actions,
+[data-theme="light"] .contact-info-card-phone .contact-card-actions {
+  border-top-color: #e2e8f0;
+}
+
 [data-theme="light"] .contact-form-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #e2e8f0;
   box-shadow: 0 12px 36px -6px rgba(37, 99, 235, 0.08);
+}
+
+/* Light Mode Overrides for Contact Auth & Admin Hub */
+[data-theme="light"] .contact-auth-status-bar {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="light"] .auth-user-name {
+  color: #0f172a;
+}
+
+[data-theme="light"] .auth-user-email {
+  color: #64748b;
+}
+
+[data-theme="light"] .auth-role-pill.verified-pill {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #a7f3d0;
+}
+
+[data-theme="light"] .auth-role-pill.admin-pill {
+  background: #faf5ff;
+  color: #7c3aed;
+  border-color: #ddd6fe;
+}
+
+[data-theme="light"] .btn-auth-switch {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+[data-theme="light"] .btn-auth-switch:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+[data-theme="light"] .btn-auth-signout {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+[data-theme="light"] .btn-auth-signout:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+[data-theme="light"] .admin-header-title h3 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .admin-live-badge {
+  color: #059669;
+}
+
+[data-theme="light"] .btn-refresh-inbox {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+[data-theme="light"] .btn-refresh-inbox:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+[data-theme="light"] .admin-metric-card {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+[data-theme="light"] .metric-label {
+  color: #64748b;
+}
+
+[data-theme="light"] .metric-val {
+  color: #0f172a;
+}
+
+[data-theme="light"] .metric-val-db {
+  color: #059669 !important;
+}
+
+[data-theme="light"] .admin-search-box {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  color: #64748b;
+}
+
+[data-theme="light"] .admin-search-box:focus-within {
+  background: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+[data-theme="light"] .admin-search-input {
+  color: #0f172a;
+}
+
+[data-theme="light"] .admin-search-input::placeholder {
+  color: #94a3b8;
+}
+
+[data-theme="light"] .admin-inbox-stats-sub {
+  color: #64748b;
+}
+
+[data-theme="light"] .admin-msg-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-left: 3px solid #7c3aed;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="light"] .admin-msg-card:hover {
+  background: #fdfaff;
+  border-color: #c084fc;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.08);
+}
+
+[data-theme="light"] .admin-sender-name strong {
+  color: #0f172a;
+}
+
+[data-theme="light"] .admin-email-tag {
+  color: #2563eb;
+}
+
+[data-theme="light"] .admin-msg-time {
+  color: #64748b;
+}
+
+[data-theme="light"] .admin-msg-subject {
+  color: #475569;
+}
+
+[data-theme="light"] .admin-msg-subject strong {
+  color: #0f172a;
+}
+
+[data-theme="light"] .admin-msg-content {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+[data-theme="light"] .btn-admin-action.btn-wa {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #059669;
+}
+
+[data-theme="light"] .btn-admin-action.btn-wa:hover {
+  background: #059669;
+  color: #ffffff;
+}
+
+[data-theme="light"] .contact-view-tabs {
+  border-bottom-color: #e2e8f0;
+}
+
+[data-theme="light"] .contact-view-tabs .tab-btn,
+[data-theme="light"] .contact-tab-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+[data-theme="light"] .contact-view-tabs .tab-btn:hover,
+[data-theme="light"] .contact-tab-btn:hover {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+[data-theme="light"] .contact-view-tabs .tab-btn.active,
+[data-theme="light"] .contact-tab-btn.active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+[data-theme="light"] .tab-badge {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+[data-theme="light"] .history-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-left: 3px solid #2563eb;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="light"] .history-card:hover {
+  background: #f8fbff;
+  border-color: #93c5fd;
+}
+
+[data-theme="light"] .history-subject-text {
+  color: #0f172a;
+}
+
+[data-theme="light"] .history-timestamp {
+  color: #64748b;
+}
+
+[data-theme="light"] .history-body {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+[data-theme="light"] .history-status-chip {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #a7f3d0;
+}
+
+[data-theme="light"] .input-locked {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] .email-locked-badge {
+  color: #059669;
+}
+
+[data-theme="light"] .auth-profile-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .auth-profile-info strong {
+  color: #0f172a;
+}
+
+[data-theme="light"] .auth-profile-info span {
+  color: #64748b;
+}
+
+[data-theme="light"] .auth-divider::before {
+  background: #e2e8f0;
+}
+
+[data-theme="light"] .auth-divider span {
+  background: #ffffff;
+  color: #64748b;
 }
 
 [data-theme="light"] .form-label {
@@ -3662,8 +3974,8 @@ textarea.form-control {
   align-items: center;
   justify-content: space-between;
   padding: 12px 18px;
-  background: rgba(15, 23, 42, 0.92);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: var(--bg-card);
+  border: 1px solid var(--border-cyan);
   border-radius: 14px;
   margin-bottom: 22px;
   flex-wrap: wrap;
@@ -3740,7 +4052,7 @@ textarea.form-control {
 .auth-user-name {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3769,7 +4081,7 @@ textarea.form-control {
 
 .auth-user-email {
   font-size: 0.8rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
   font-family: inherit;
   white-space: nowrap;
   overflow: hidden;
@@ -3924,8 +4236,8 @@ textarea.form-control {
 }
 
 .history-card {
-  background: rgba(20, 28, 46, 0.65);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-left: 3px solid var(--accent-cyan, #38bdf8);
   border-radius: 14px;
   padding: 18px 20px;
@@ -3933,8 +4245,8 @@ textarea.form-control {
 }
 
 .history-card:hover {
-  border-color: rgba(56, 189, 248, 0.4);
-  background: rgba(20, 28, 46, 0.9);
+  border-color: var(--border-cyan);
+  background: var(--bg-card-hover, rgba(20, 28, 46, 0.9));
   transform: translateY(-2px);
 }
 
@@ -3956,7 +4268,7 @@ textarea.form-control {
 .history-subject-text {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary);
 }
 
 .history-status-chip {
@@ -3979,8 +4291,8 @@ textarea.form-control {
 .history-body {
   font-size: 0.88rem;
   line-height: 1.6;
-  color: #cbd5e1;
-  background: rgba(11, 15, 25, 0.5);
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
   border-radius: 8px;
   padding: 12px 14px;
   margin-bottom: 12px;
@@ -4069,8 +4381,8 @@ textarea.form-control {
 }
 
 .admin-metric-card {
-  background: rgba(20, 28, 46, 0.6);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 14px 16px;
   display: flex;
@@ -4081,14 +4393,20 @@ textarea.form-control {
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 
 .metric-val {
   font-size: 1.55rem;
   font-weight: 900;
-  color: var(--text-primary, #ffffff);
+  color: var(--text-primary);
+}
+
+.metric-val-db {
+  font-size: 0.92rem !important;
+  color: var(--accent-emerald, #10b981);
+  line-height: 1.4;
 }
 
 .admin-filter-bar {
@@ -4099,24 +4417,25 @@ textarea.form-control {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 10px 14px;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
 }
 
 .admin-search-input {
   background: transparent;
   border: none;
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 0.88rem;
   width: 100%;
   outline: none;
 }
 
 .admin-search-input::placeholder {
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .admin-messages-feed {
@@ -4130,22 +4449,22 @@ textarea.form-control {
 
 .admin-inbox-stats-sub {
   font-size: 0.8rem;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
 .admin-msg-card {
-  background: rgba(20, 28, 46, 0.7);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  border-left: 3px solid #a855f7;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent-purple, #a855f7);
   border-radius: 14px;
   padding: 18px 20px;
   transition: all 0.25s ease;
 }
 
 .admin-msg-card:hover {
-  background: rgba(20, 28, 46, 0.95);
-  border-color: rgba(168, 85, 247, 0.4);
+  background: var(--bg-card-hover, rgba(20, 28, 46, 0.95));
+  border-color: var(--accent-purple, rgba(168, 85, 247, 0.4));
   transform: translateY(-2px);
 }
 
@@ -4186,7 +4505,7 @@ textarea.form-control {
 
 .admin-sender-name strong {
   font-size: 0.95rem;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .admin-email-tag {
@@ -4197,7 +4516,7 @@ textarea.form-control {
 
 .admin-msg-time {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-muted, #64748b);
   font-family: monospace;
   margin-top: 2px;
 }
@@ -4242,15 +4561,15 @@ textarea.form-control {
 }
 
 .admin-msg-subject strong {
-  color: #ffffff;
+  color: var(--text-primary);
   margin-left: 4px;
 }
 
 .admin-msg-content {
   font-size: 0.88rem;
   line-height: 1.65;
-  color: #e2e8f0;
-  background: rgba(11, 15, 25, 0.6);
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
   border-radius: 8px;
   padding: 12px 14px;
   white-space: pre-wrap;
