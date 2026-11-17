@@ -132,7 +132,7 @@
   window.launchDirectGoogleOAuth = function (overrideRedirect) {
     const config = (window.PORTFOLIO_CONFIG && (window.PORTFOLIO_CONFIG.auth || (window.PORTFOLIO_CONFIG.personal && window.PORTFOLIO_CONFIG.personal.auth))) || {};
     const clientId = config.googleClientId || '902168382803-6gof845v72ku6k4lp4mecsgr3l1uc3s0.apps.googleusercontent.com';
-    let redirectUri = overrideRedirect || config.redirectUri || 'https://kandukuri-jagan-portfolio.netlify.app/';
+    let redirectUri = overrideRedirect || config.redirectUri || 'https://kandukuri-jagan-portfolio.netlify.app';
     if (!overrideRedirect && typeof window !== 'undefined' && window.location && window.location.origin.includes('localhost')) {
       redirectUri = window.location.origin + '/';
     }
