@@ -4,7 +4,7 @@
  * ==============================================================================
  * 
  * Target Admin Email : kandukurijagan99@gmail.com
- * Current Web App URL: https://script.google.com/macros/s/AKfycbxb2uoJsZRDcn4kB8_aNXXV9BfwZhdBIJWjMpn9JeNANWMclM6icL-bukdR4IwYq_ds/exec
+ * Current Web App URL: https://script.google.com/macros/s/AKfycbwpv5exe2OE-op9KhqQCO0fJScB8nEkyOjfKvr2H-5k85nIfpAnqehRXemZnqQ-oY0/exec
  * 
  * Capabilities:
  * 1. 📊 Stores messages in Google Sheet with verified sender metadata (Timestamp, Name, Email ID, Subject, Message, Avatar, Status)

@@ -20,7 +20,7 @@ const PORTFOLIO_CONFIG = {
     phone: "+91 8367047947",
     email: "kandukurijagan99@gmail.com",
     // Google Apps Script Web App Endpoint for real-time email dispatch
-    contactWebhookUrl: "https://script.google.com/macros/s/AKfycbxb2uoJsZRDcn4kB8_aNXXV9BfwZhdBIJWjMpn9JeNANWMclM6icL-bukdR4IwYq_ds/exec",
+    contactWebhookUrl: "https://script.google.com/macros/s/AKfycbwpv5exe2OE-op9KhqQCO0fJScB8nEkyOjfKvr2H-5k85nIfpAnqehRXemZnqQ-oY0/exec",
     // Google Authentication & Admin Control Settings
     auth: {
       adminEmail: "kandukurijagan99@gmail.com",

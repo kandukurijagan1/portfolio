@@ -1,6 +1,6 @@
 # 📬 Google Apps Script Contact Dispatcher & Parallel Auto-Reply Guide
 **Target Inbox:** `kandukurijagan99@gmail.com`  
-**Web App URL:** `https://script.google.com/macros/s/AKfycbxb2uoJsZRDcn4kB8_aNXXV9BfwZhdBIJWjMpn9JeNANWMclM6icL-bukdR4IwYq_ds/exec`
+**Web App URL:** `https://script.google.com/macros/s/AKfycbwpv5exe2OE-op9KhqQCO0fJScB8nEkyOjfKvr2H-5k85nIfpAnqehRXemZnqQ-oY0/exec`
 
 ---
 
